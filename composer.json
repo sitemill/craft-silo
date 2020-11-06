@@ -1,0 +1,51 @@
+{
+  "name": "sitemill/craft-dam",
+  "description": "Digital asset manager for Craft CMS 3",
+  "type": "craft-plugin",
+  "version": "1.0.0",
+  "keywords": [
+    "craft",
+    "cms",
+    "craftcms",
+    "craft-plugin",
+    "dam"
+  ],
+  "support": {
+    "docs": "https://github.com/sitemill/craft-dam/blob/master/README.md",
+    "issues": "https://github.com/sitemill/craft-dam/issues"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "SiteMill",
+      "homepage": "https://sitemill.co"
+    }
+  ],
+  "require": {
+    "craftcms/cms": "^3.5.0"
+  },
+  "require-dev": {
+    "craftcms/cms": "^3.5.0",
+    "codeception/codeception": "^3.0",
+    "vlucas/phpdotenv": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "sitemill\\dam\\": "src/"
+    }
+  },
+  "extra": {
+    "name": "Dam",
+    "handle": "dam",
+    "developer": "SiteMill",
+    "developerUrl": "https://sitemill.co",
+    "documentationUrl": "https://github.com/sitemill/craft-dam/blob/master/README.md",
+    "changelogUrl": "https://raw.githubusercontent.com/sitemill/craft-dam/master/CHANGELOG.md",
+    "components": {
+      "lightbox": "sitemill\\dam\\services\\Lightbox",
+      "asset": "sitemill\\dam\\elements\\DamAsset",
+      "download": "sitemill\\dam\\services\\Download"
+    },
+    "class": "sitemill\\dam\\Dam"
+  }
+}

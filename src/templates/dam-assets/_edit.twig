@@ -1,0 +1,236 @@
+{% extends "_layouts/element" %}
+{% import "_includes/forms" as forms %}
+
+{% set redirectUrl = "dam-assets/#live" %}
+{% set canUpdateSource = canEdit %}
+{% set saveSourceAction = 'dam/dam-assets/save-dam-asset' %}
+{% set deleteSourceAction = 'dam/dam-assets/delete-dam-asset' %}
+
+{% block actionButton %}
+    <div class="btngroup">
+        {#  TODO: add link to front-end page instead of directly to asset #}
+        <a class="btn" href="{{ file.url }}" target="_blank" data-icon="preview">{{ 'View'|t('app') }}</a>
+        <button type="button" id="download-btn" class="btn" data-icon="download">{{ 'Download'|t('app') }}</button>
+    </div>
+
+    {# TODO: think about this#}
+    {#    {% if canReplaceFile %}#}
+    {#        <button type="button" id="replace-btn" class="btn" data-icon="upload">{{ 'Replace file'|t('app') }}</button>#}
+    {#    {% endif %}#}
+
+    {% if not isApproved %}
+        <input type="hidden" id="approved" name="approved" value="0">
+        <button type="button" id="approvedBtn" class="btn btn--approved">&#10004; {{ "Approve"|t('dam') }}</button>
+    {% endif %}
+
+    {% js on ready %}
+        $('#approvedBtn').on('click',function(){
+            $('#approved').val(1 - $('#approved').val()) ;
+        });
+    {% endjs %}
+
+    {% css %}
+        input[value="1"] + #approvedBtn {
+            color:white !important;
+            background-color:rgb(0, 185, 56);
+        }
+
+        input[value="1"] + #approvedBtn:hover {
+        background-color:rgb(0, 147, 44);
+        }
+
+    {% endcss %}
+
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {{ forms.textField({
+        label: 'Title'|t('app'),
+        id: 'title',
+        name: 'title',
+        value: element.title,
+        errors: element.getErrors('newLocation'),
+    }) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block details %}
+    {{ previewHtml|raw }}
+    {{ parent() }}
+{% endblock %}
+
+{% block settings %}
+    {{ forms.textField({
+        label: 'Filename'|t('app'),
+        id: 'filename',
+        name: 'filename',
+        value: element.file.filename,
+        errors: element.file.getErrors('newLocation'),
+    }) }}
+{% endblock %}
+
+{% block meta %}
+    <div class="data">
+        <h5 class="heading">{{ 'Location'|t('app') }}</h5>
+        <div class="value">
+            {{ volume.name|t('site') }}
+            {% if element.file.folderPath %}
+                → {{ element.file.folderPath|trim('/')|replace('/', ' → ') }}
+            {% endif %}
+        </div>
+        <h5 class="heading">{{ 'Downloads'|t('app') }}</h5>
+        <div class="value">
+            {{ element.downloads }}
+        </div>
+    </div>
+
+    {% if formattedSize %}
+        <div class="data">
+            <h5 class="heading">{{ 'File size'|t('app') }}</h5>
+            {{ tag('div', {
+                id: 'file-size-value',
+                class: 'value',
+                text: formattedSize,
+                title: formattedSizeInBytes,
+            }) }}
+        </div>
+    {% endif %}
+
+    {{ parent() }}
+
+    {% set uploader = element.file.getUploader() %}
+    {% if uploader %}
+        <div class="data">
+            <h5 class="heading">{{ 'Uploaded by'|t('app') }}</h5>
+            <div class="value" id="uploader-element">
+                {% include '_elements/element' with {
+                    element: uploader,
+                } %}
+            </div>
+            {% js %}
+                new Craft.ElementThumbLoader().load($('#uploader-element'));
+            {% endjs %}
+        </div>
+    {% endif %}
+
+    {% if dimensions %}
+        <div class="data">
+            <h5 class="heading">{{ 'Dimensions'|t('app') }}</h5>
+            <div id="dimensions-value" class="value">{{ dimensions }}</div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+
+{% js on ready %}
+    var assetId = {{ element.file.id|json_encode|raw }};
+    var $previewThumbContainer = $('#preview-thumb-container');
+
+    function updatePreviewThumb() {
+    $previewThumbContainer.addClass('loading');
+    Craft.postActionRequest('assets/preview-thumb', {
+    assetId: assetId,
+    width: 350,
+    height: 190
+    }, function(response, textStatus) {
+    $previewThumbContainer.removeClass('loading');
+    if (textStatus === 'success') {
+    $previewThumbContainer.find('img').replaceWith(response.img);
+    }
+    });
+    }
+
+    $('#download-btn').on('click', function() {
+    var $form = Craft.createForm().appendTo(Garnish.$bod);
+    $(Craft.getCsrfInput()).appendTo($form);
+    $('<input/>', {
+    type: 'hidden',
+    name: 'action',
+    value: 'assets/download-asset'
+    }).appendTo($form);
+    $('<input/>', {
+    type: 'hidden',
+    name: 'assetId',
+    value: assetId
+    }).appendTo($form);
+    $('<input/>', {
+    type: 'submit',
+    value: 'Submit',
+    }).appendTo($form);
+    $form.submit();
+    $form.remove();
+    });
+
+    $('#replace-btn').on('click', function() {
+    var $fileInput = $('<input type="file" name="replaceFile" class="replaceFile hidden"/>')
+    .appendTo(Garnish.$bod);
+    var uploader = new Craft.Uploader($fileInput, {
+    url: Craft.getActionUrl('assets/replace-file'),
+    dropZone: null,
+    fileInput: $fileInput,
+    paramName: 'replaceFile',
+    events: {
+    fileuploadstart: function() {
+    $previewThumbContainer.addClass('loading');
+    },
+    fileuploaddone: function(event, data) {
+    if (data.result.error) {
+    $previewThumbContainer.removeClass('loading');
+    alert(data.result.error);
+    } else {
+    $('#filename').val(data.result.filename);
+    $('#file-size-value')
+    .text(data.result.formattedSize)
+    .attr('title', data.result.formattedSizeInBytes);
+    var $dimensionsVal = $('#dimensions-value');
+    if (data.result.dimensions) {
+    if (!$dimensionsVal.length) {
+    $('<div class="data">' +
+    '<div class="heading">' + {{ 'Dimensions'|t('app')|json_encode|raw }} + '</div>' +
+    '<div id="dimensions-value" class="value"></div>' +
+    '</div>').appendTo($('#meta-details'));
+    $dimensionsVal = $('#dimensions-value');
+    }
+    $dimensionsVal.text(data.result.dimensions);
+    } else if ($dimensionsVal.length) {
+    $dimensionsVal.parent().remove();
+    }
+    updatePreviewThumb();
+    Craft.cp.runQueue();
+    }
+    }
+    }
+    });
+    uploader.setParams({
+    assetId: assetId
+    });
+    $fileInput.click();
+    });
+
+    $('#edit-btn').on('click', function() {
+        new Craft.AssetImageEditor(assetId, {
+            onSave: function () {
+                updatePreviewThumb();
+            },
+        allowDegreeFractions: Craft.isImagick
+        });
+    });
+
+    var settings = {};
+
+    {% if dimensions %}
+        {% set previewDimensions = dimensions|split('×') %}
+        settings.startingWidth = {{ previewDimensions[0] }};
+        settings.startingHeight = {{ previewDimensions[1] }};
+    {% endif %}
+
+    $('#preview-btn').on('click', function() {
+    new Craft.PreviewFileModal(assetId, null, settings);
+    });
+{% endjs %}
+
+{# Uppy #}
+{% js on ready %}
+
+{% endjs %}

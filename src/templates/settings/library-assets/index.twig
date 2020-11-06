@@ -1,0 +1,15 @@
+{% extends "_layouts/cp" %}
+{% set fullPageForm = true %}
+
+{% import '_includes/forms' as forms %}
+
+{% set title = 'Library Asset Field layout'|t %}
+
+{% block content %}
+    {{ actionInput('library/dam-assets/save-field-layout') }}
+    {{ forms.fieldLayoutDesignerField({
+        fieldLayout: craft.app.fields.getLayoutByType(
+            'sitemill\\dam\\elements\\LibraryAsset'
+        )
+    }) }}
+{% endblock %}

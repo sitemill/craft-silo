@@ -1,0 +1,95 @@
+{% extends "_layouts/elementindex" %}
+{% set title = "Library Assets"|t('library') %}
+{% set elementType = 'sitemill\\dam\\elements\\DamAsset' %}
+
+{% do view.registerAssetBundle("sitemill\\dam\\assetbundles\\DamAssets") %}
+
+{% set allowedFileExtensions = [] %}
+
+{% for extension in craft.app.config.general.allowedFileExtensions %}
+    {% set allowedFileExtensions = allowedFileExtensions|merge(["'." ~ extension ~ "'"]) %}
+{% endfor %}
+
+{# Register the buttons #}
+{% js %}
+    (function($) {
+
+    if (typeof Craft.Dam === 'undefined') {
+    Craft.Dam = {};
+    }
+
+    var elementTypeClass = 'sitemill\\dam\\elements\\DamAsset';
+
+    Craft.Dam.DamAssetIndex = Craft.BaseElementIndex.extend({
+    afterInit: function() {
+    // Hide the approval button
+    var label = Craft.t('dam', 'Upload Assets');
+
+    this.$newEventBtnGroup = $('<div class="btngroup submit"/>');
+    this.$newEventBtn = $('<a id="upload-dam-assets" class="btn submit icon" data-icon="upload">' + label + '</a>').appendTo(this.$newEventBtnGroup);
+
+    this.addButton(this.$newEventBtnGroup);
+
+    this.base();
+    },
+    showActionTriggers: function() {
+    this.base();
+    if (this.$source.data('key') != 'staged')
+    {
+    $('#sitemill-dam-elements-actions-Approve-actiontrigger').hide();
+    console.log($('#sitemill-dam-elements-actions-Approve-actiontrigger'))
+    }
+    }
+    });
+
+    // Register it!
+    try {
+    Craft.registerElementIndexClass(elementTypeClass, Craft.Dam.DamAssetIndex);
+    } catch (e) {
+    // Already registered
+    }
+
+    })(jQuery);
+
+{% endjs %}
+
+{# Handle Uppy #}
+{% js on ready %}
+   const uppy = new Uppy({
+       meta: {
+           'folderId': 20
+       },
+       restrictions: {
+           maxFileSize:{{ craft.app.config.general.maxUploadFileSize }},
+           minNumberOfFiles: null,
+           allowedFileTypes: [{{ allowedFileExtensions|join(',')|raw }}]
+       },
+   })
+   .use(Dashboard, {
+        trigger: '#upload-dam-assets',
+        closeModalOnClickOutside: true,
+        proudlyDisplayPoweredByUppy: false,
+        closeAfterFinish: true
+   })
+   .use(XHRUpload,{
+        endpoint: '/dam/assets/upload',
+        fieldName: 'assets-upload',
+        headers: { 'X-CSRF-Token': '{{ craft.app.request.csrfToken }}' },
+        timeout: 180 * 1000
+   })
+   uppy.on('complete', (result) => {
+        $source = Craft.elementIndex.getSourceByKey('staged');
+        Craft.elementIndex.selectSource($source);
+        Craft.elementIndex.updateElements();
+        console.log('Upload complete! We’ve uploaded these files:', result.successful)
+        result.successful
+        .forEach(
+            element =>
+            Craft.elementIndex.getElementById(394)
+        );
+   })
+
+    // TODO: localisation
+    // TODO: select recently updated with selectElementById https://github.com/craftcms/cms/blob/16acdf83625aa861fbbea8485bccb03fc01d2e95/src/web/assets/cp/src/js/BaseElementIndexView.js
+
+{% endjs %}
