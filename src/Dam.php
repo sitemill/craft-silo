@@ -227,7 +227,7 @@ class Dam extends Plugin
     protected function settingsHtml(): string
     {
         return Craft::$app->view->renderTemplate(
-            'dam/settings/library-assets',
+            'dam/settings',
             [
                 'settings' => $this->getSettings()
             ]

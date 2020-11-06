@@ -3,13 +3,13 @@
 
 {% import '_includes/forms' as forms %}
 
-{% set title = 'Library Asset Field layout'|t %}
+{% set title = 'DAM Asset Field layout'|t %}
 
 {% block content %}
-    {{ actionInput('library/dam-assets/save-field-layout') }}
+    {{ actionInput('dam/dam-assets/save-field-layout') }}
     {{ forms.fieldLayoutDesignerField({
         fieldLayout: craft.app.fields.getLayoutByType(
-            'sitemill\\dam\\elements\\LibraryAsset'
+            'sitemill\\dam\\elements\\DamAsset'
         )
     }) }}
 {% endblock %}
