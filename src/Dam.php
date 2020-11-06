@@ -96,15 +96,6 @@ class Dam extends Plugin
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function(RegisterUrlRulesEvent $event) {
-                $event->rules['/'] = ['template' => '_pages/home'];
-                $event->rules['login'] = ['template' => '_pages/login'];
-                $event->rules['register'] = ['template' => '_pages/register'];
-                $event->rules['all'] = ['template' => '_pages/all'];
-                $event->rules['asset/<assetId:\d+>/?<assetSlug>'] = ['template' => '_pages/asset'];
-                $event->rules['page/<entryId:\d+>/?<entrySlug>'] = ['template' => '_pages/page'];
-                $event->rules['category/<categoryId:\d+>/?<categorySlug>'] = ['template' => '_pages/category'];
-                $event->rules['account'] = ['template' => '_pages/account'];
-                $event->rules['dialog/<action>/?<id:\d+>'] = ['template' => '_dialogs/index'];
                 $event->rules['dam/assets/upload'] = 'dam/dam-assets/upload-dam-assets';
             }
         );
@@ -128,16 +119,16 @@ class Dam extends Plugin
 
         // Register permissions
         Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
-            $event->permissions[Craft::t('dam', 'Dam')] = [
+            $event->permissions[Craft::t('dam', 'Asset Manager')] = [
                 'dam-editDamAssets' => [
                     'label' => Craft::t('dam', 'Edit DAM assets'), 'nested' => [
-                        'dam-createDamAssets' => ['label' => Craft::t('dam', 'Create DAM assets')],
-                        'dam-approveDamAssets' => ['label' => Craft::t('dam', 'Approve DAM assets')],
-                        'dam-deleteDamAssets' => ['label' => Craft::t('dam', 'Delete DAM assets')],
+                        'dam-createDamAssets' => ['label' => Craft::t('dam', 'Create assets')],
+                        'dam-approveDamAssets' => ['label' => Craft::t('dam', 'Approve assets')],
+                        'dam-deleteDamAssets' => ['label' => Craft::t('dam', 'Delete assets')],
                         'dam-editPeerDamAssets' => [
-                            'label' => Craft::t('dam', 'Edit other authors\' DAM assets'), 'nested' => [
-                                'dam-approvePeerDamAssets' => ['label' => Craft::t('dam', 'Approve other authors\' DAM assets')],
-                                'dam-deletePeerDamAssets' => ['label' => Craft::t('dam', 'Delete other authors\' DAM assets')],
+                            'label' => Craft::t('dam', 'Edit other authors\' assets'), 'nested' => [
+                                'dam-approvePeerDamAssets' => ['label' => Craft::t('dam', 'Approve other authors\' assets')],
+                                'dam-deletePeerDamAssets' => ['label' => Craft::t('dam', 'Delete other authors\' assets')],
                             ]
                         ],
                     ]
