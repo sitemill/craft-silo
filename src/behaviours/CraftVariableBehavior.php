@@ -13,7 +13,7 @@ use yii\base\Behavior;
  */
 class CraftVariableBehavior extends Behavior
 {
-    public function libraryAssets($criteria = null): DamAssetQuery
+    public function damAssets($criteria = null): DamAssetQuery
     {
         $query = DamAsset::find();
         if ($criteria) {

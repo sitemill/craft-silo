@@ -27,32 +27,32 @@ class DamAssets extends Component
     /*
      * @return mixed
      */
-    public function getDamAssetById(int $libraryAssetId, $siteId = null, array $criteria = []) {
+    public function getDamAssetById(int $damAssetId, $siteId = null, array $criteria = []) {
 
-        if (!$libraryAssetId) {
+        if (!$damAssetId) {
             return null;
         }
 
-        return Craft::$app->getElements()->getElementById($libraryAssetId, DamAsset::class, $siteId, $criteria);
+        return Craft::$app->getElements()->getElementById($damAssetId, DamAsset::class, $siteId, $criteria);
     }
 
     /*
     * @return mixed
     */
-    public function archiveLibraryAsset(DamAsset $libraryAsset): bool
+    public function archiveLibraryAsset(DamAsset $damAsset): bool
     {
-        $libraryAsset->isArchived = 1;
-        return Craft::$app->elements->saveElement($libraryAsset);
+        $damAsset->isArchived = 1;
+        return Craft::$app->elements->saveElement($damAsset);
     }
 
     /*
     * @return mixed
     */
-    public function incrementDownloads(int $libraryAssetId): bool
+    public function incrementDownloads(int $damAssetId): bool
     {
-        $libraryAsset = $this->getLibraryAssetById($libraryAssetId);
-        $libraryAsset->downloads = ++$libraryAsset->downloads;
-        return Craft::$app->elements->saveElement($libraryAsset);
+        $damAsset = $this->getDamAssetById($damAssetId);
+        $damAsset->downloads = ++$damAsset->downloads;
+        return Craft::$app->elements->saveElement($damAsset);
     }
 
 }

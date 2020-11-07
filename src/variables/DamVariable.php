@@ -8,11 +8,14 @@
 
 namespace sitemill\dam\variables;
 
+use craft\elements\Asset;
 use craft\helpers\UrlHelper;
+use sitemill\dam\elements\DamAsset;
 use sitemill\dam\Library;
 
 use Craft;
 use Traversable;
+use yii\db\Exception;
 
 /**
  * @author    SiteMill
@@ -33,16 +36,26 @@ class DamVariable
 
     public function download($assets)
     {
-//        var_dump($assets);
         $ids = [];
+
+        // Detect if it's more than one asset
         if (is_array($assets)) {
-            foreach ($assets as $asset) {
-                $ids[] = $asset->id;
+            // If it's a DAM asset
+            if($assets[0] instanceof DamAsset) {
+                foreach ($assets as $asset) {
+                    $ids[] = $asset->id;
+                }
+            } else {
+                throw new Exception(Craft::t('dam', 'Download twig variable expects instances of DamAsset'));
             }
         } else {
-            $ids[] = $assets->id;
+            if($assets instanceof DamAsset) {
+                $ids[] =  $assets->id;
+            } else {
+                throw new Exception(Craft::t('dam', 'Download twig variable expects instances of DamAsset'));
+            }
         }
-        return UrlHelper::actionUrl('/library/download/', [
+        return UrlHelper::actionUrl('/dam/download/', [
             'files' => $ids
         ]);
     }

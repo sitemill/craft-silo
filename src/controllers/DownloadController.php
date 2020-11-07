@@ -13,6 +13,7 @@ use craft\helpers\FileHelper;
 use Craft;
 use craft\web\Controller;
 use sitemill\dam\Dam;
+use sitemill\dam\elements\DamAsset;
 use sitemill\dam\services\DamAssets;
 use yii\base\Exception;
 
@@ -42,7 +43,6 @@ class DownloadController extends Controller
      */
     public function actionIndex()
     {
-        $libraryAssetsEnabled = Dam::$plugin->getSettings()->assetsSource == 'libraryAssets';
 
         $request = Craft::$app->getRequest();
 
@@ -53,12 +53,7 @@ class DownloadController extends Controller
         if (count($fileIds) > 1) {
             $file = Dam::$plugin->download->archive($fileIds);
         } else {
-            // Handle library asset if enabled
-            if ($libraryAssetsEnabled) {
-                $file = \sitemill\dam\elements\DamAsset::find()->id($fileIds[0])->one()->file->getCopyOfFile();
-            } else {
-                $file = Craft::$app->assets->getAssetById($fileIds[0])->getCopyOfFile();
-            }
+            $file = DamAsset::find()->id($fileIds[0])->one()->file->getCopyOfFile();
         }
 
         // Push the download
@@ -66,12 +61,11 @@ class DownloadController extends Controller
             throw new Exception(Craft::t('library', 'Failed to download files'));
         }
 
-        // Record the downloads
-        if ($libraryAssetsEnabled) {
-            foreach ($fileIds as $libraryAssetId) {
-                DamAssets::instance()->incrementDownloads($libraryAssetId);
-            }
+//
+        foreach ($fileIds as $damAssetId) {
+            DamAssets::instance()->incrementDownloads($damAssetId);
         }
+
 
         // Delete the temp file
         FileHelper::unlink($file);

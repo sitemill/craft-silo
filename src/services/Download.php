@@ -8,11 +8,10 @@
 
 namespace sitemill\dam\services;
 
-use craft\elements\Asset;
-use craft\helpers\FileHelper;
-use sitemill\dam\Library;
+use sitemill\dam\elements\DamAsset;
 
 use Craft;
+use craft\helpers\FileHelper;
 use craft\base\Component;
 use yii\base\Exception;
 use ZipArchive;
@@ -33,20 +32,12 @@ class Download extends Component
      */
     public function archive(array $assetIds, string $filename = 'Archive')
     {
-        $libraryAssetsEnabled = Library::$plugin->getSettings()->assetsSource == 'libraryAssets';
 
         // Fetch the assets
-        if ($libraryAssetsEnabled) {
-            $assets = \sitemill\dam\elements\DamAsset::find()
-                ->id($assetIds)
-                ->limit(null)
-                ->all();
-        } else {
-            $assets = Asset::find()
-                ->id($assetIds)
-                ->limit(null)
-                ->all();
-        }
+        $assets = DamAsset::find()
+            ->id($assetIds)
+            ->limit(null)
+            ->all();
 
         // Set the archive name to create (name chosen + stamp)
         $tempFile = Craft::$app->getPath()
@@ -59,11 +50,7 @@ class Download extends Component
         if ($zip->open($tempFile, ZipArchive::CREATE) === true) {
 
             foreach ($assets as $asset) {
-
-                // Grab the file
-                if ($libraryAssetsEnabled) {
-                    $assetObject = $asset->file;
-                }
+                $assetObject = $asset->file;
 
                 // Get a temp copy of the file
                 $file = $assetObject->getCopyOfFile();
@@ -80,6 +67,6 @@ class Download extends Component
             return $tempFile;
         }
 
-        throw new Exception(Craft::t('library', 'Failed to generate the archive'));
+        throw new Exception(Craft::t('dam', 'Failed to generate the archive'));
     }
 }
