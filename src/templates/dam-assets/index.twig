@@ -17,95 +17,99 @@
         {% if settings.assetsHandle != null %}
             {{ parent() }}
         {% else %}
-            {{ "No assets volume selected in asset manager's settings."|t('dam') }}
+            {{ "No asset volume selected in Digital Asset Manager's settings."|t('dam') }}
         {% endif %}
     {% endblock %}
 
+{# Register buttons if asset volume selected #}
 
-{# Register the buttons #}
-{% js %}
-    (function($) {
+{% if settings.assetsHandle != null %}
+    {# Register the buttons #}
+    {% js %}
+        (function($) {
 
-    if (typeof Craft.Dam === 'undefined') {
-    Craft.Dam = {};
-    }
+        if (typeof Craft.Dam === 'undefined') {
+        Craft.Dam = {};
+        }
 
-    var elementTypeClass = 'sitemill\\dam\\elements\\DamAsset';
+        var elementTypeClass = 'sitemill\\dam\\elements\\DamAsset';
 
-    Craft.Dam.DamAssetIndex = Craft.BaseElementIndex.extend({
-    afterInit: function() {
-    // Hide the approval button
-    var label = Craft.t('dam', 'Upload Assets');
+        Craft.Dam.DamAssetIndex = Craft.BaseElementIndex.extend({
+        afterInit: function() {
+        // Hide the approval button
+        var label = Craft.t('dam', 'Upload Assets');
 
-    this.$newEventBtnGroup = $('<div class="btngroup submit"/>');
-    this.$newEventBtn = $('<a id="upload-dam-assets" class="btn submit icon" data-icon="upload">' + label + '</a>').appendTo(this.$newEventBtnGroup);
+        this.$newEventBtnGroup = $('<div class="btngroup submit"/>');
+        this.$newEventBtn = $('<a id="upload-dam-assets" class="btn submit icon" data-icon="upload">' + label + '</a>').appendTo(this.$newEventBtnGroup);
 
-    this.addButton(this.$newEventBtnGroup);
+        this.addButton(this.$newEventBtnGroup);
 
-    this.base();
-    },
-    showActionTriggers: function() {
-    this.base();
-    if (this.$source.data('key') != 'staged')
-    {
-    $('#sitemill-dam-elements-actions-Approve-actiontrigger').hide();
-    console.log($('#sitemill-dam-elements-actions-Approve-actiontrigger'))
-    }
-    }
-    });
+        this.base();
+        },
+        showActionTriggers: function() {
+        this.base();
+        if (this.$source.data('key') != 'staged')
+        {
+        $('#sitemill-dam-elements-actions-Approve-actiontrigger').hide();
+        console.log($('#sitemill-dam-elements-actions-Approve-actiontrigger'))
+        }
+        }
+        });
 
-    // Register it!
-    try {
-    Craft.registerElementIndexClass(elementTypeClass, Craft.Dam.DamAssetIndex);
-    } catch (e) {
-    // Already registered
-    }
+        // Register it!
+        try {
+        Craft.registerElementIndexClass(elementTypeClass, Craft.Dam.DamAssetIndex);
+        } catch (e) {
+        // Already registered
+        }
 
-    })(jQuery);
+        })(jQuery);
 
-{% endjs %}
+    {% endjs %}
 
-{# Handle Uppy #}
-{% set volumeId = craft.app.volumes.volumeByHandle(settings.assetsHandle).id %}
-{% set folderId = craft.app.assets.rootFolderByVolumeId(volumeId).id %}
+    {# Handle Uppy #}
 
-{% js on ready %}
-{#  TODO: feed in folder ID from settings #}
-   const uppy = new Uppy({
-       meta: {
-           'folderId': {{ folderId }}
-       },
-       restrictions: {
-           maxFileSize:{{ craft.app.config.general.maxUploadFileSize }},
-           minNumberOfFiles: null,
-           allowedFileTypes: [{{ allowedFileExtensions|join(',')|raw }}]
-       },
-   })
-   .use(Dashboard, {
-        trigger: '#upload-dam-assets',
-        closeModalOnClickOutside: true,
-        proudlyDisplayPoweredByUppy: false,
-        closeAfterFinish: true
-   })
-   .use(XHRUpload,{
-        endpoint: '/dam/assets/upload',
-        fieldName: 'assets-upload',
-        headers: { 'X-CSRF-Token': '{{ craft.app.request.csrfToken }}' },
-        timeout: 180 * 1000
-   })
-   uppy.on('complete', (result) => {
-        $source = Craft.elementIndex.getSourceByKey('staged');
-        Craft.elementIndex.selectSource($source);
-        Craft.elementIndex.updateElements();
-        console.log('Upload complete! We’ve uploaded these files:', result.successful)
-        result.successful
-        .forEach(
-            element =>
-            Craft.elementIndex.getElementById(394)
-        );
-   })
+    {% set volumeId = craft.app.volumes.volumeByHandle(settings.assetsHandle).id %}
+    {% set folderId = craft.app.assets.rootFolderByVolumeId(volumeId).id %}
 
-    // TODO: localisation
-    // TODO: select recently updated with selectElementById https://github.com/craftcms/cms/blob/16acdf83625aa861fbbea8485bccb03fc01d2e95/src/web/assets/cp/src/js/BaseElementIndexView.js
+    {% js on ready %}
+    {#  TODO: feed in folder ID from settings #}
+       const uppy = new Uppy({
+           meta: {
+               'folderId': {{ folderId }}
+           },
+           restrictions: {
+               maxFileSize:{{ craft.app.config.general.maxUploadFileSize }},
+               minNumberOfFiles: null,
+               allowedFileTypes: [{{ allowedFileExtensions|join(',')|raw }}]
+           },
+       })
+       .use(Dashboard, {
+            trigger: '#upload-dam-assets',
+            closeModalOnClickOutside: true,
+            proudlyDisplayPoweredByUppy: false,
+            closeAfterFinish: true
+       })
+       .use(XHRUpload,{
+            endpoint: '/dam/assets/upload',
+            fieldName: 'assets-upload',
+            headers: { 'X-CSRF-Token': '{{ craft.app.request.csrfToken }}' },
+            timeout: 180 * 1000
+       })
+       uppy.on('complete', (result) => {
+            $source = Craft.elementIndex.getSourceByKey('staged');
+            Craft.elementIndex.selectSource($source);
+            Craft.elementIndex.updateElements();
+            console.log('Upload complete! We’ve uploaded these files:', result.successful)
+            result.successful
+            .forEach(
+                element =>
+                Craft.elementIndex.getElementById(394)
+            );
+       })
 
-{% endjs %}
+        // TODO: localisation
+        // TODO: select recently updated with selectElementById https://github.com/craftcms/cms/blob/16acdf83625aa861fbbea8485bccb03fc01d2e95/src/web/assets/cp/src/js/BaseElementIndexView.js
+
+    {% endjs %}
+{% endif %}
