@@ -8,6 +8,7 @@
 
 namespace sitemill\dam;
 
+use craft\helpers\UrlHelper;
 use sitemill\dam\fields\DamAssetsField as DamAssetsField;
 use sitemill\dam\services\Lightbox as LightboxService;
 use sitemill\dam\services\Download as DownloadService;
@@ -143,7 +144,7 @@ class Dam extends Plugin
             function(RegisterUrlRulesEvent $event) {
                 $event->rules['dam-assets'] = ['template' => 'dam/dam-assets/index'];
                 $event->rules['dam-assets/<damAssetId:\d+><slug:(?:-{slug})?>'] = 'dam/dam-assets/edit-dam-asset';
-                $event->rules['settings/plugins/dam/dam-assets'] = 'dam/dam-assets/edit-field-layout';
+                $event->rules['dam/settings'] = 'dam/settings/index';
             }
         );
 
@@ -215,14 +216,23 @@ class Dam extends Plugin
     /**
      * @inheritdoc
      */
-    protected function settingsHtml(): string
+    public function getSettingsResponse()
     {
-        return Craft::$app->view->renderTemplate(
-            'dam/settings',
-            [
-                'settings' => $this->getSettings()
-            ]
-        );
+        // Just redirect to the plugin settings page
+        Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('dam/settings'));
     }
+
+//    /**
+//     * @inheritdoc
+//     */
+//    protected function settingsHtml(): string
+//    {
+//        return Craft::$app->view->renderTemplate(
+//            'dam/settings',
+//            [
+//                'settings' => $this->getSettings()
+//            ]
+//        );
+//    }
 
 }

@@ -365,32 +365,7 @@ class DamAssetsController extends BaseEntriesController
         return $enabledForSite;
     }
 
-    /**
-     * @return mixed
-     */
-    public function actionEditFieldLayout()
-    {
-//      TODO: change this controller to edit settings, have field layout on same page as settings
-        return $this->renderTemplate('dam/settings/dam-assets');
-    }
 
-
-    /**
-     * @return mixed
-     */
-    public function actionSaveFieldLayout()
-    {
-        $this->requirePostRequest();
-
-        $fieldLayout = Craft::$app->getFields()->assembleLayoutFromPost();
-        $fieldLayout->type = DamAsset::class;
-        if (!Craft::$app->fields->saveLayout($fieldLayout)) {
-            $this->setFailFlash(Craft::t('app', 'Couldn’t save field layout.'));
-            return null;
-        }
-        $this->setSuccessFlash(Craft::t('app', 'Field layout saved.'));
-        return true;
-    }
 
     /**
      * @param DamAsset $damAsset

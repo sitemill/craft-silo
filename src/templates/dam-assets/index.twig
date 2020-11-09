@@ -1,6 +1,8 @@
 {% extends "_layouts/elementindex" %}
-{% set title = "Library Assets"|t('library') %}
+
+{% set title = "Asset Manager"|t('dam') %}
 {% set elementType = 'sitemill\\dam\\elements\\DamAsset' %}
+{% set settings = craft.app.getPlugins().getPlugin('dam').getSettings() %}
 
 {% do view.registerAssetBundle("sitemill\\dam\\assetbundles\\DamAssets") %}
 
@@ -9,6 +11,16 @@
 {% for extension in craft.app.config.general.allowedFileExtensions %}
     {% set allowedFileExtensions = allowedFileExtensions|merge(["'." ~ extension ~ "'"]) %}
 {% endfor %}
+
+
+    {% block content %}
+        {% if settings.assetsHandle != null %}
+            {{ parent() }}
+        {% else %}
+            {{ "No assets volume selected in asset manager's settings."|t('dam') }}
+        {% endif %}
+    {% endblock %}
+
 
 {# Register the buttons #}
 {% js %}
@@ -54,11 +66,14 @@
 {% endjs %}
 
 {# Handle Uppy #}
+{% set volumeId = craft.app.volumes.volumeByHandle(settings.assetsHandle).id %}
+{% set folderId = craft.app.assets.rootFolderByVolumeId(volumeId).id %}
+
 {% js on ready %}
 {#  TODO: feed in folder ID from settings #}
    const uppy = new Uppy({
        meta: {
-           'folderId': 20
+           'folderId': {{ folderId }}
        },
        restrictions: {
            maxFileSize:{{ craft.app.config.general.maxUploadFileSize }},

@@ -1,1 +1,53 @@
-{% redirect 'dam/settings/library-assets' %}
+{% extends "_layouts/cp" %}
+{% set fullPageForm = true %}
+
+{% import '_includes/forms' as forms %}
+
+
+{% set title = 'Digital Asset Manager'|t %}
+
+{% set crumbs = [
+    { label: "Settings"|t('app'), url: url('settings') }
+] %}
+
+{% block content %}
+
+    {{ actionInput('dam/settings/save') }}
+
+    {% set assetVolumes = craft.app.volumes.allVolumes %}
+
+    {% if assetVolumes|length  %}
+
+        {% set sources = {} %}
+
+        {% for volume in assetVolumes %}
+            {% set sources = sources|merge({
+                (volume.handle) : {
+                    label: volume.name,
+                    value: volume.handle
+                }
+            }) %}
+
+        {% endfor %}
+
+        {{ forms.selectField({
+            label: 'Assets source'|t('dam'),
+            instructions: 'Select the volume where assets will be uploaded.'|t('dam'),
+            id: 'assetsHandle',
+            name: 'assetsHandle',
+            value: settings.assetsHandle,
+            options: sources
+        }) }}
+    {% else %}
+        <span style="color:red"> {{ "No volumes exist yet."|t('app') }}</span>
+    {% endif %}
+
+    <hr>
+
+    {{ forms.fieldLayoutDesignerField({
+        fieldLayout: craft.app.fields.getLayoutByType(
+            'sitemill\\dam\\elements\\DamAsset'
+        )
+    }) }}
+
+{% endblock %}

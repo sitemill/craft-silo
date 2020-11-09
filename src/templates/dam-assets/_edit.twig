@@ -53,11 +53,13 @@
         errors: element.getErrors('newLocation'),
     }) }}
     {{ parent() }}
+    {% hook 'dam.assets.edit.content' %}
 {% endblock %}
 
 {% block details %}
     {{ previewHtml|raw }}
     {{ parent() }}
+    {% hook "dam.assets.edit.details" %}
 {% endblock %}
 
 {% block settings %}
@@ -68,6 +70,7 @@
         value: element.file.filename,
         errors: element.file.getErrors('newLocation'),
     }) }}
+    {% hook "dam.assets.edit.settings" %}
 {% endblock %}
 
 {% block meta %}
@@ -120,6 +123,7 @@
             <div id="dimensions-value" class="value">{{ dimensions }}</div>
         </div>
     {% endif %}
+    {% hook "dam.assets.edit.meta" %}
 {% endblock %}
 
 

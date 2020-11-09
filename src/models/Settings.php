@@ -28,16 +28,8 @@ class Settings extends Model
     /**
      * @var string The handle of the asset volume used by Library
      */
-    public $assetsHandle = 'libraryAssets';
+    public $assetsHandle = null;
 
-
-
-
-
-
-// TODO: update rules
-// Public Methods
-// =========================================================================
 
     /**
      * @inheritdoc
