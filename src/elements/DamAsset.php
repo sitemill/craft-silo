@@ -282,10 +282,7 @@ class DamAsset extends Element
 
     public function getThumbUrl(int $size)
     {
-        $asset = Craft::$app->assets->getAssetById($this->assetId);
-        if ($asset) {
-            return Craft::$app->getAssets()->getThumbUrl($asset, 640, 480, false);
-        }
+        return $this->file->getThumbUrl($size);
     }
 
     protected static function defineActions(string $source = null): array
