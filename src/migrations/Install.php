@@ -12,7 +12,7 @@ class Install extends Migration
     {
         $this->createTables();
 //    TODO: create indexes
-//    $this->createIndexes();
+        $this->createIndexes();
         $this->addForeignKeys();
     }
 
