@@ -287,7 +287,7 @@ class DamAssetsController extends BaseEntriesController
         $siteId = $this->request->getBodyParam('siteId');
 
         if ($damAssetId) {
-            $damAsset = Craft::$app->elements->getElementById($damAssetId,DamAsset::class, $siteId);
+            $damAsset = Craft::$app->elements->getElementById($damAssetId, DamAsset::class, $siteId);
             if (!$damAsset) {
                 throw new NotFoundHttpException('DAM asset not found');
             }
@@ -342,7 +342,6 @@ class DamAssetsController extends BaseEntriesController
         }
 
         $damAsset->uploaderId = $uploaderId;
-
     }
 
     /**
@@ -364,8 +363,7 @@ class DamAssetsController extends BaseEntriesController
         }
         return $enabledForSite;
     }
-
-
+    
 
     /**
      * @param DamAsset $damAsset
