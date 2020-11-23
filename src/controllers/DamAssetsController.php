@@ -363,7 +363,7 @@ class DamAssetsController extends BaseEntriesController
         }
         return $enabledForSite;
     }
-    
+
 
     /**
      * @param DamAsset $damAsset
