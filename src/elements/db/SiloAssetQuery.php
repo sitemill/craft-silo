@@ -8,18 +8,20 @@ use craft\helpers\Db;
 class SiloAssetQuery extends ElementQuery
 {
     public $uploaderId;
+    public $approverId;
     public $assetId;
-    public $filename;
     public $kind;
-    public $width;
-    public $height;
     public $size;
-    public $focalPoint;
     public $approved;
     public $downloads;
 
     public function uploaderId($value) {
         $this->uploaderId = $value;
+        return $this;
+    }
+
+    public function approverId($value) {
+        $this->approverId = $value;
         return $this;
     }
 
@@ -29,40 +31,16 @@ class SiloAssetQuery extends ElementQuery
         return $this;
     }
 
-
-    public function filename($value)
-    {
-        $this->filename = $value;
-        return $this;
-    }
-
     public function kind($value)
     {
         $this->kind = $value;
         return $this;
     }
 
-    public function width($value)
-    {
-        $this->width = $value;
-        return $this;
-    }
-
-    public function height($value)
-    {
-        $this->height = $value;
-        return $this;
-    }
 
     public function size($value)
     {
         $this->size = $value;
-        return $this;
-    }
-
-    public function focalPoint($value)
-    {
-        $this->focalPoint = $value;
         return $this;
     }
 
@@ -84,13 +62,10 @@ class SiloAssetQuery extends ElementQuery
 
         $this->query->select([
             'silo_assets.uploaderId',
+            'silo_assets.approverId',
             'silo_assets.assetId',
-            'silo_assets.filename',
             'silo_assets.kind',
-            'silo_assets.width',
-            'silo_assets.height',
             'silo_assets.size',
-            'silo_assets.focalPoint',
             'silo_assets.approved',
             'silo_assets.downloads'
         ]);
@@ -99,32 +74,20 @@ class SiloAssetQuery extends ElementQuery
             $this->subQuery->andWhere(Db::parseParam('silo_assets.uploaderId', $this->uploaderId));
         }
 
-        if ($this->assetId) {
-            $this->subQuery->andWhere(Db::parseParam('silo_assets.assetId', $this->assetId));
+        if ($this->approverId) {
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.approverId', $this->approverId));
         }
 
-        if ($this->filename) {
-            $this->subQuery->andWhere(Db::parseParam('silo_assets.filename', $this->filename));
+        if ($this->assetId) {
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.assetId', $this->assetId));
         }
 
         if ($this->kind) {
             $this->subQuery->andWhere(Db::parseParam('silo_assets.kind', $this->kind));
         }
 
-        if ($this->width) {
-            $this->subQuery->andWhere(Db::parseParam('silo_assets.width', $this->width));
-        }
-
-        if ($this->height) {
-            $this->subQuery->andWhere(Db::parseParam('silo_assets.height', $this->height));
-        }
-
         if ($this->size) {
             $this->subQuery->andWhere(Db::parseParam('silo_assets.size', $this->size));
-        }
-
-        if ($this->focalPoint) {
-            $this->subQuery->andWhere(Db::parseParam('silo_assets.focalPoint', $this->focalPoint));
         }
 
         if ($this->approved) {

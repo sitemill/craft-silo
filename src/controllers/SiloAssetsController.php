@@ -193,12 +193,8 @@ class SiloAssetsController extends BaseEntriesController
             'title' => $asset->title,
             'uploaderId' => $asset->uploaderId,
             'assetId' => $asset->id,
-            'filename' => $asset->filename,
             'kind' => $asset->kind,
-            'width' => $asset->width,
-            'height' => $asset->height,
-            'size' => $asset->size,
-            'focalPoint' => $asset->hasFocalPoint ? $asset->focalPoint : null,
+            'size' => $asset->size
         ]);
 
         if (!Craft::$app->elements->saveElement($siloAsset)) {

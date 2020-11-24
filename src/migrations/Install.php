@@ -30,18 +30,16 @@ class Install extends Migration
         $this->createTable('{{%silo_assets}}', [
             'id' => $this->integer()->notNull(),
             'uploaderId' => $this->integer(),
+            'approverId' => $this->integer(),
             'assetId' => $this->integer(),
-            'filename' => $this->string()->notNull(),
             'kind' => $this->string(50)->notNull()->defaultValue(Asset::KIND_UNKNOWN),
-            'width' => $this->integer()->unsigned(),
-            'height' => $this->integer()->unsigned(),
             'size' => $this->bigInteger()->unsigned(),
-            'focalPoint' => $this->string(13)->null(),
             'approved' => $this->tinyInteger()->unsigned(),
             'downloads' => $this->integer()->defaultValue(0),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'dateDeleted' => $this->dateTime()->null(),
+            'dateApproved' => $this->dateTime()->null(),
             'uid' => $this->uid(),
             'PRIMARY KEY([[id]])',
         ]);
@@ -63,5 +61,6 @@ class Install extends Migration
         $this->addForeignKey(null, '{{%silo_assets}}', ['id'], Table::ELEMENTS, ['id'], 'CASCADE');
         $this->addForeignKey(null, '{{%silo_assets}}', ['assetId'], Table::ASSETS, ['id'], 'CASCADE');
         $this->addForeignKey(null, '{{%silo_assets}}', ['uploaderId'], Table::USERS, ['id'], 'CASCADE');
+        $this->addForeignKey(null, '{{%silo_assets}}', ['approverId'], Table::USERS, ['id'], 'CASCADE');
     }
 }

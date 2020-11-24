@@ -48,12 +48,12 @@ class SiloAsset extends Element
     /**
      * @var int
      */
-    public $assetId = 0;
+    public $approverId = 0;
 
     /**
-     * @var string
+     * @var int
      */
-    public $filename = '';
+    public $assetId = 0;
 
     /**
      * @var string
@@ -63,22 +63,7 @@ class SiloAsset extends Element
     /**
      * @var int
      */
-    public $width = 0;
-
-    /**
-     * @var int
-     */
-    public $height = 0;
-
-    /**
-     * @var int
-     */
     public $size = 0;
-
-    /**
-     * @var int
-     */
-    public $focalPoint = null;
 
     /**
      * @var bool
@@ -94,6 +79,11 @@ class SiloAsset extends Element
      * @var User|null
      */
     private $_uploader;
+
+    /**
+     * @var User|null
+     */
+    private $_approver;
 
     /**
      * @var Asset|null
@@ -214,7 +204,7 @@ class SiloAsset extends Element
                 return $uploader ? Cp::elementHtml($uploader) : '';
 
             case 'filename':
-                return Html::tag('span', Html::encode($this->filename), [
+                return Html::tag('span', Html::encode($this->file->filename), [
                     'class' => 'break-word',
                 ]);
 
@@ -222,7 +212,7 @@ class SiloAsset extends Element
                 return AssetsHelper::getFileKindLabel($this->kind);
 
             case 'size':
-                if ($this->size === null) {
+                if ($this->file->size === null) {
                     return '';
                 }
                 return Html::tag('span', $this->file->getFormattedSize(0), [
@@ -234,7 +224,7 @@ class SiloAsset extends Element
 
             case 'width':
             case 'height':
-                $size = $this->$attribute;
+                $size = $this->file->$attribute;
                 return ($size ? $size . 'px' : '');
         }
 
@@ -371,12 +361,8 @@ class SiloAsset extends Element
                     'id' => $this->id,
                     'uploaderId' => (int)$this->uploaderId,
                     'assetId' => (int)$this->assetId,
-                    'filename' => $this->filename,
                     'kind' => $this->kind,
-                    'width' => (int)$this->width ?: null,
-                    'height' => (int)$this->height ?: null,
                     'size' => $this->size ?: null,
-                    'focalPoint' => $this->focalPoint,
                     'approved' => $this->approved,
                     'downloads' => $this->downloads
                 ])
@@ -385,13 +371,10 @@ class SiloAsset extends Element
             \Craft::$app->db->createCommand()
                 ->update('{{%silo_assets}}', [
                     'uploaderId' => (int)$this->uploaderId,
+//                    'approverId' => (int)$this->approverId,
                     'assetId' => (int)$this->assetId,
-                    'filename' => $this->filename,
                     'kind' => $this->kind,
-                    'width' => (int)$this->width ?: null,
-                    'height' => (int)$this->height ?: null,
                     'size' => $this->size ?: null,
-                    'focalPoint' => $this->focalPoint,
                     'approved' => $this->approved,
                     'downloads' => $this->downloads
                 ], ['id' => $this->id])
@@ -551,6 +534,35 @@ class SiloAsset extends Element
     public function setUploader(User $uploader = null)
     {
         $this->_uploader = $uploader;
+    }
+
+    /**
+     * Returns the user that approved the Silo asset, if known.
+     */
+    public function getApprover()
+    {
+        if ($this->_approver !== null) {
+            return $this->_approver;
+        }
+
+        if ($this->approverId === null) {
+            return null;
+        }
+
+        if (($this->_approver = Craft::$app->getUsers()->getUserById($this->approverId)) === null) {
+            // The uploader is probably soft-deleted. Just pretend no uploader is set
+            return null;
+        }
+
+        return $this->_approver;
+    }
+
+    /**
+     * Sets the Silo asset's approver.
+     */
+    public function setApprover(User $uploader = null)
+    {
+        $this->_approver = $uploader;
     }
 
 
