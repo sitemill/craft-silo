@@ -111,10 +111,10 @@ class SiloAssetQuery extends ElementQuery
                     'elements_sites.enabled' => true,
                     'approved' => true
                 ];
-//            case 'live':
-//                return [
-//                    'approved' => true,
-//                ];
+            case 'active':
+                return [
+                    'approved' => true,
+                ];
             case 'staged':
                 return [
                     'approved' => false

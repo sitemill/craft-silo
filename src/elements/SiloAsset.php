@@ -36,6 +36,7 @@ use craft\elements\actions\SetStatus;
 class SiloAsset extends Element
 {
     const STATUS_STAGED = 'staged';
+    const STATUS_ACTIVE = 'active';
 
     // Public Properties
     // =========================================================================
@@ -144,7 +145,7 @@ class SiloAsset extends Element
     public static function statuses(): array
     {
         return [
-            'staged' => ['label' => \Craft::t('silo', 'Staged'), 'color' => 'ff8c00'],
+            self::STATUS_STAGED => ['label' => \Craft::t('silo', 'Staged'), 'color' => 'orange'],
         ];
     }
 
@@ -174,10 +175,10 @@ class SiloAsset extends Element
 
         return [
             [
-                'key' => 'live',
-                'label' => 'Live',
+                'key' => 'active',
+                'label' => 'Active',
                 'criteria' => [
-                    'status' => 'enabled',
+                    'status' => 'active'
                 ],
                 'hasThumbs' => true,
             ],
@@ -185,19 +186,11 @@ class SiloAsset extends Element
                 'key' => 'staged',
                 'label' => 'Staged',
                 'criteria' => [
-                    'status' => 'staged',
+                    'status' => 'staged'
                 ],
                 'badgeCount' => $stagedCount,
                 'hasThumbs' => true
             ],
-//            [
-//                'key' => 'archived',
-//                'label' => 'Archived',
-//                'criteria' => [
-//                    'status' => 'archived',
-//                ],
-//                'hasThumbs' => true
-//            ],
             [
                 'heading' => 'Categories'
             ]
