@@ -141,6 +141,16 @@ class SiloAsset extends Element
     /**
      * @inheritdoc
      */
+    public static function statuses(): array
+    {
+        return [
+            'staged' => ['label' => \Craft::t('silo', 'Staged'), 'color' => 'ff8c00'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function isLocalized(): bool
     {
         return true;
@@ -154,6 +164,7 @@ class SiloAsset extends Element
         return new SiloAssetQuery(static::class);
     }
 
+
     /**
      * @inheritdoc
      */
@@ -166,7 +177,7 @@ class SiloAsset extends Element
                 'key' => 'live',
                 'label' => 'Live',
                 'criteria' => [
-                    'status' => 'live',
+                    'status' => 'enabled',
                 ],
                 'hasThumbs' => true,
             ],
@@ -191,6 +202,18 @@ class SiloAsset extends Element
                 'heading' => 'Categories'
             ]
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getStatus()
+    {
+        if (!$this->approved) {
+            return self::STATUS_STAGED;
+        }
+
+        return parent::getStatus();
     }
 
     /**

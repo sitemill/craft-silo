@@ -2,6 +2,7 @@
 
 namespace sitemill\silo\elements\db;
 
+use craft\base\Element;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
 
@@ -104,10 +105,16 @@ class SiloAssetQuery extends ElementQuery
     protected function statusCondition(string $status)
     {
         switch ($status) {
-            case 'live':
+            case Element::STATUS_ENABLED:
                 return [
-                    'approved' => true,
+                    'elements.enabled' => true,
+                    'elements_sites.enabled' => true,
+                    'approved' => true
                 ];
+//            case 'live':
+//                return [
+//                    'approved' => true,
+//                ];
             case 'staged':
                 return [
                     'approved' => false
