@@ -1,7 +1,7 @@
 <?php
 
 
-namespace sitemill\dam\helpers;
+namespace sitemill\silo\helpers;
 
 use Craft;
 use craft\volumes\Local;

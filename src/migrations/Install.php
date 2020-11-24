@@ -1,6 +1,6 @@
 <?php
 
-namespace sitemill\dam\migrations;
+namespace sitemill\silo\migrations;
 
 use craft\db\Migration;
 use craft\db\Table;
@@ -11,14 +11,13 @@ class Install extends Migration
     public function safeUp()
     {
         $this->createTables();
-//    TODO: create indexes
         $this->createIndexes();
         $this->addForeignKeys();
     }
 
     public function safeDown()
     {
-        $this->dropTableIfExists('{{%dam_assets}}');
+        $this->dropTableIfExists('{{%silo_assets}}');
         //    TODO: create a delete migration
 //        $this->deleteElementData();
     }
@@ -28,7 +27,7 @@ class Install extends Migration
      */
     protected function createTables()
     {
-        $this->createTable('{{%dam_assets}}', [
+        $this->createTable('{{%silo_assets}}', [
             'id' => $this->integer()->notNull(),
             'uploaderId' => $this->integer(),
             'assetId' => $this->integer(),
@@ -53,7 +52,7 @@ class Install extends Migration
      */
     protected function createIndexes()
     {
-        $this->createIndex(null, '{{%dam_assets}}', ['id']);
+        $this->createIndex(null, '{{%silo_assets}}', ['id']);
     }
 
     /**
@@ -61,8 +60,8 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-        $this->addForeignKey(null, '{{%dam_assets}}', ['id'], Table::ELEMENTS, ['id'], 'CASCADE');
-        $this->addForeignKey(null, '{{%dam_assets}}', ['assetId'], Table::ASSETS, ['id'], 'CASCADE');
-        $this->addForeignKey(null, '{{%dam_assets}}', ['uploaderId'], Table::USERS, ['id'], 'CASCADE');
+        $this->addForeignKey(null, '{{%silo_assets}}', ['id'], Table::ELEMENTS, ['id'], 'CASCADE');
+        $this->addForeignKey(null, '{{%silo_assets}}', ['assetId'], Table::ASSETS, ['id'], 'CASCADE');
+        $this->addForeignKey(null, '{{%silo_assets}}', ['uploaderId'], Table::USERS, ['id'], 'CASCADE');
     }
 }

@@ -6,9 +6,9 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\models;
+namespace sitemill\silo\models;
 
-use sitemill\dam\Library;
+use sitemill\silo\Library;
 
 use Craft;
 use craft\base\Model;
@@ -16,7 +16,7 @@ use craft\validators\ArrayValidator;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
 class Settings extends Model

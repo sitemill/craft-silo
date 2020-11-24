@@ -6,20 +6,20 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam;
+namespace sitemill\silo;
 
-use craft\helpers\UrlHelper;
-use sitemill\dam\fields\DamAssetsField as DamAssetsField;
-use sitemill\dam\services\Lightbox as LightboxService;
-use sitemill\dam\services\Download as DownloadService;
-use sitemill\dam\services\DamAssets as DamAssetsService;
-use sitemill\dam\services\Setup as SetupService;
-use sitemill\dam\variables\DamVariable;
-use sitemill\dam\elements\DamAsset;
-use sitemill\dam\models\Settings;
-use sitemill\dam\behaviours\CraftVariableBehavior;
+use sitemill\silo\fields\SiloAssetsField as SiloAssetsField;
+use sitemill\silo\services\Lightbox as LightboxService;
+use sitemill\silo\services\Download as DownloadService;
+use sitemill\silo\services\SiloAssets as SiloAssetsService;
+use sitemill\silo\services\Setup as SetupService;
+use sitemill\silo\variables\SiloVariable;
+use sitemill\silo\elements\SiloAsset;
+use sitemill\silo\models\Settings;
+use sitemill\silo\behaviours\CraftVariableBehavior;
 
 use Craft;
+use craft\helpers\UrlHelper;
 use craft\base\Plugin;
 use craft\services\Plugins;
 use craft\services\Elements;
@@ -42,15 +42,15 @@ use yii\base\Event;
  * Class Library
  *
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  *
  * @property  LightboxService $lightbox
- * @property  DamAssetsService $libraryAssets
+ * @property  SiloAssetsService $libraryAssets
  * @property  DownloadService $download
  * @property  SetupService $setup
  */
-class Dam extends Plugin
+class Silo extends Plugin
 {
 
 
@@ -58,7 +58,7 @@ class Dam extends Plugin
     // =========================================================================
 
     /**
-     * @var Dam
+     * @var Silo
      */
     public static $plugin;
 
@@ -97,7 +97,7 @@ class Dam extends Plugin
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function(RegisterUrlRulesEvent $event) {
-                $event->rules['dam/assets/upload'] = 'dam/dam-assets/upload-dam-assets';
+                $event->rules['silo/assets/upload'] = 'silo/silo-assets/upload-silo-assets';
             }
         );
 
@@ -105,7 +105,7 @@ class Dam extends Plugin
         Event::on(Elements::class,
             Elements::EVENT_REGISTER_ELEMENT_TYPES,
             function(RegisterComponentTypesEvent $event) {
-                $event->types[] = DamAsset::class;
+                $event->types[] = SiloAsset::class;
             }
         );
 
@@ -114,22 +114,22 @@ class Dam extends Plugin
             Fields::class,
             Fields::EVENT_REGISTER_FIELD_TYPES,
             function (RegisterComponentTypesEvent $event) {
-                $event->types[] = DamAssetsField::class;
+                $event->types[] = SiloAssetsField::class;
             }
         );
 
         // Register permissions
         Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
-            $event->permissions[Craft::t('dam', 'Asset Manager')] = [
-                'dam-editDamAssets' => [
-                    'label' => Craft::t('dam', 'Edit DAM assets'), 'nested' => [
-                        'dam-createDamAssets' => ['label' => Craft::t('dam', 'Create assets')],
-                        'dam-approveDamAssets' => ['label' => Craft::t('dam', 'Approve assets')],
-                        'dam-deleteDamAssets' => ['label' => Craft::t('dam', 'Delete assets')],
-                        'dam-editPeerDamAssets' => [
-                            'label' => Craft::t('dam', 'Edit other authors\' assets'), 'nested' => [
-                                'dam-approvePeerDamAssets' => ['label' => Craft::t('dam', 'Approve other authors\' assets')],
-                                'dam-deletePeerDamAssets' => ['label' => Craft::t('dam', 'Delete other authors\' assets')],
+            $event->permissions[Craft::t('silo', 'Asset Manager')] = [
+                'silo-editSiloAssets' => [
+                    'label' => Craft::t('silo', 'Edit Silo assets'), 'nested' => [
+                        'silo-createSiloAssets' => ['label' => Craft::t('silo', 'Create assets')],
+                        'silo-approveSiloAssets' => ['label' => Craft::t('silo', 'Approve assets')],
+                        'silo-deleteSiloAssets' => ['label' => Craft::t('silo', 'Delete assets')],
+                        'silo-editPeerSiloAssets' => [
+                            'label' => Craft::t('silo', 'Edit other authors\' assets'), 'nested' => [
+                                'silo-approvePeerSiloAssets' => ['label' => Craft::t('silo', 'Approve other authors\' assets')],
+                                'silo-deletePeerSiloAssets' => ['label' => Craft::t('silo', 'Delete other authors\' assets')],
                             ]
                         ],
                     ]
@@ -142,9 +142,9 @@ class Dam extends Plugin
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function(RegisterUrlRulesEvent $event) {
-                $event->rules['dam-assets'] = ['template' => 'dam/dam-assets/index'];
-                $event->rules['dam-assets/<damAssetId:\d+><slug:(?:-{slug})?>'] = 'dam/dam-assets/edit-dam-asset';
-                $event->rules['dam/settings'] = 'dam/settings/index';
+                $event->rules['silo-assets'] = ['template' => 'silo/silo-assets/index'];
+                $event->rules['silo-assets/<siloAssetId:\d+><slug:(?:-{slug})?>'] = 'silo/silo-assets/edit-silo-asset';
+                $event->rules['silo/settings'] = 'silo/settings/index';
             }
         );
 
@@ -154,25 +154,25 @@ class Dam extends Plugin
             Cp::EVENT_REGISTER_CP_NAV_ITEMS,
             function(RegisterCpNavItemsEvent $event) {
                 $event->navItems[] = [
-                    'url' => 'dam-assets',
+                    'url' => 'silo-assets',
                     'label' => 'Asset Manager',
-//                    'icon' => 'sitemill/dam/icon.svg',
+//                    'icon' => 'sitemill/silo/icon.svg',
                 ];
             }
         );
 
-        // Register DAM variable
+        // Register Silo variable
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
             function(Event $event) {
                 /** @var CraftVariable $variable */
                 $variable = $event->sender;
-                $variable->set('dam', DamVariable::class);
+                $variable->set('silo', SiloVariable::class);
             }
         );
 
-        // Register DamAsset behaviour
+        // Register SiloAsset behaviour
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {
             /** @var CraftVariable $variable */
             $variable = $e->sender;
@@ -194,7 +194,7 @@ class Dam extends Plugin
 
         Craft::info(
             Craft::t(
-                'dam',
+                'silo',
                 '{name} plugin loaded',
                 ['name' => $this->name]
             ),
@@ -219,20 +219,7 @@ class Dam extends Plugin
     public function getSettingsResponse()
     {
         // Just redirect to the plugin settings page
-        Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('dam/settings'));
+        Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('silo/settings'));
     }
-
-//    /**
-//     * @inheritdoc
-//     */
-//    protected function settingsHtml(): string
-//    {
-//        return Craft::$app->view->renderTemplate(
-//            'dam/settings',
-//            [
-//                'settings' => $this->getSettings()
-//            ]
-//        );
-//    }
 
 }

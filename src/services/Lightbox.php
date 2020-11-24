@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\services;
+namespace sitemill\silo\services;
 
 use Craft;
 use craft\base\Component;
@@ -14,7 +14,7 @@ use craft\base\Component;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
 class Lightbox extends Component

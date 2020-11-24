@@ -6,20 +6,20 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\controllers;
+namespace sitemill\silo\controllers;
 
 use craft\helpers\FileHelper;
 
 use Craft;
 use craft\web\Controller;
-use sitemill\dam\Dam;
-use sitemill\dam\elements\DamAsset;
-use sitemill\dam\services\DamAssets;
+use sitemill\silo\Silo;
+use sitemill\silo\elements\SiloAsset;
+use sitemill\silo\services\SiloAssets;
 use yii\base\Exception;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
 class DownloadController extends Controller
@@ -51,9 +51,9 @@ class DownloadController extends Controller
 
         // Decide whether or not to archive em'
         if (count($fileIds) > 1) {
-            $file = Dam::$plugin->download->archive($fileIds);
+            $file = Silo::$plugin->download->archive($fileIds);
         } else {
-            $file = DamAsset::find()->id($fileIds[0])->one()->file->getCopyOfFile();
+            $file = SiloAsset::find()->id($fileIds[0])->one()->file->getCopyOfFile();
         }
 
         // Push the download
@@ -62,8 +62,8 @@ class DownloadController extends Controller
         }
 
 //
-        foreach ($fileIds as $damAssetId) {
-            DamAssets::instance()->incrementDownloads($damAssetId);
+        foreach ($fileIds as $siloAssetId) {
+            SiloAssets::instance()->incrementDownloads($siloAssetId);
         }
 
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace sitemill\dam\elements\db;
+namespace sitemill\silo\elements\db;
 
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
 
-class DamAssetQuery extends ElementQuery
+class SiloAssetQuery extends ElementQuery
 {
     public $uploaderId;
     public $assetId;
@@ -80,59 +80,59 @@ class DamAssetQuery extends ElementQuery
 
     protected function beforePrepare(): bool
     {
-        $this->joinElementTable('dam_assets');
+        $this->joinElementTable('silo_assets');
 
         $this->query->select([
-            'dam_assets.uploaderId',
-            'dam_assets.assetId',
-            'dam_assets.filename',
-            'dam_assets.kind',
-            'dam_assets.width',
-            'dam_assets.height',
-            'dam_assets.size',
-            'dam_assets.focalPoint',
-            'dam_assets.approved',
-            'dam_assets.downloads'
+            'silo_assets.uploaderId',
+            'silo_assets.assetId',
+            'silo_assets.filename',
+            'silo_assets.kind',
+            'silo_assets.width',
+            'silo_assets.height',
+            'silo_assets.size',
+            'silo_assets.focalPoint',
+            'silo_assets.approved',
+            'silo_assets.downloads'
         ]);
 
         if ($this->uploaderId) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.uploaderId', $this->uploaderId));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.uploaderId', $this->uploaderId));
         }
 
         if ($this->assetId) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.assetId', $this->assetId));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.assetId', $this->assetId));
         }
 
         if ($this->filename) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.filename', $this->filename));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.filename', $this->filename));
         }
 
         if ($this->kind) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.kind', $this->kind));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.kind', $this->kind));
         }
 
         if ($this->width) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.width', $this->width));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.width', $this->width));
         }
 
         if ($this->height) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.height', $this->height));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.height', $this->height));
         }
 
         if ($this->size) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.size', $this->size));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.size', $this->size));
         }
 
         if ($this->focalPoint) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.focalPoint', $this->focalPoint));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.focalPoint', $this->focalPoint));
         }
 
         if ($this->approved) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.approved', $this->approved));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.approved', $this->approved));
         }
 
         if ($this->downloads) {
-            $this->subQuery->andWhere(Db::parseParam('dam_assets.downloads', $this->downloads));
+            $this->subQuery->andWhere(Db::parseParam('silo_assets.downloads', $this->downloads));
         }
 
         return parent::beforePrepare();

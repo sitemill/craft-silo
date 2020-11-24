@@ -6,14 +6,14 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\controllers;
+namespace sitemill\silo\controllers;
 
 use craft\base\Element;
 use craft\controllers\BaseEntriesController;
 use craft\elements\Asset;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
-use sitemill\dam\elements\DamAsset;
+use sitemill\silo\elements\SiloAsset;
 
 use Craft;
 use yii\base\Exception;
@@ -24,10 +24,10 @@ use yii\web\Response;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
-class DamAssetsController extends BaseEntriesController
+class SiloAssetsController extends BaseEntriesController
 {
 
     // Protected Properties
@@ -51,15 +51,15 @@ class DamAssetsController extends BaseEntriesController
     /**
      * Edits an asset.
      *
-     * @param int $damAssetId The asset ID
-     * @param damAsset|null $damAsset The asset being edited, if there were any validation errors.
+     * @param int $siloAssetId The asset ID
+     * @param siloAsset|null $siloAsset The asset being edited, if there were any validation errors.
      * @param string|null $site The site handle, if specified.
      * @return Response
      * @throws BadRequestHttpException if `$assetId` is invalid
      * @throws ForbiddenHttpException if the user isn't permitted to edit the asset
      * @since 3.4.0
      */
-    public function actionEditDamAsset(int $damAssetId, DamAsset $damAsset = null, string $site = null): Response
+    public function actionEditSiloAsset(int $siloAssetId, SiloAsset $siloAsset = null, string $site = null): Response
     {
         $sitesService = Craft::$app->getSites();
         $editableSiteIds = $sitesService->getEditableSiteIds();
@@ -79,28 +79,28 @@ class DamAssetsController extends BaseEntriesController
             }
         }
 
-        if ($damAsset === null) {
-            $damAsset = DamAsset::find()
-                ->id($damAssetId)
+        if ($siloAsset === null) {
+            $siloAsset = SiloAsset::find()
+                ->id($siloAssetId)
                 ->siteId($site->id)
                 ->status(null)
                 ->one();
-            if ($damAsset === null) {
-                throw new BadRequestHttpException("Invalid asset ID: {$damAssetId}");
+            if ($siloAsset === null) {
+                throw new BadRequestHttpException("Invalid asset ID: {$siloAssetId}");
             }
         }
 
-        $file = $damAsset->file;
+        $file = $siloAsset->file;
 
         // Do they have permission?
-        $this->enforceEditDamAssetPermissions($damAsset);
+        $this->enforceEditSiloAssetPermissions($siloAsset);
 
         $volume = $file->getVolume();
 
         $crumbs = [
             [
-                'label' => Craft::t('dam', 'Asset Manager'),
-                'url' => UrlHelper::url('dam-assets')
+                'label' => Craft::t('silo', 'Asset Manager'),
+                'url' => UrlHelper::url('silo-assets')
             ]
         ];
 
@@ -125,7 +125,7 @@ class DamAssetsController extends BaseEntriesController
                 $previewHtml .= '<div class="btn" id="preview-btn">' . Craft::t('app', 'Preview') . '</div>';
             }
 
-//            TODO: investigate editable images – can I create new DAM asset from crafts editor
+//            TODO: investigate editable images – can I create new Silo asset from crafts editor
 //            if ($editable) {
 //                $previewHtml .= '<div class="btn" id="edit-btn">' . Craft::t('app', 'Edit') . '</div>';
 //            }
@@ -143,7 +143,7 @@ class DamAssetsController extends BaseEntriesController
             ($userSession->getId() == $file->uploaderId || $userSession->checkPermission("replacePeerFilesInVolume:{$volume->uid}"))
         );
 
-//        // TODO: Check permission on damAsset
+//        // TODO: Check permission on siloAsset
 //        try {
 //            $this->requireVolumePermissionByAsset('deleteFilesAndFoldersInVolume', $libraryAsset);
 //            $this->requirePeerVolumePermissionByAsset('deletePeerFilesInVolume', $libraryAsset);
@@ -153,26 +153,26 @@ class DamAssetsController extends BaseEntriesController
 //        }
 
         // Get field layout
-        $fieldLayout = $damAsset->getFieldLayout();
-        $form = $fieldLayout->createForm($damAsset);
+        $fieldLayout = $siloAsset->getFieldLayout();
+        $form = $fieldLayout->createForm($siloAsset);
         $tabs = $form->getTabMenu();
         $fieldsHtml = $form->render();
 
-        return $this->renderTemplate('dam/dam-assets/_edit', [
+        return $this->renderTemplate('silo/silo-assets/_edit', [
             'siteId' => $site->id,
-            'element' => $damAsset,
+            'element' => $siloAsset,
             'volume' => $volume,
-            'file' => $damAsset->file,
-            'slug' => $damAsset->slug,
-            'title' => trim($damAsset->title) ?: Craft::t('app', 'Edit Asset'),
+            'file' => $siloAsset->file,
+            'slug' => $siloAsset->slug,
+            'title' => trim($siloAsset->title) ?: Craft::t('app', 'Edit Asset'),
             'crumbs' => $crumbs,
             'previewHtml' => $previewHtml,
-            'formattedSize' => $damAsset->file->getFormattedSize(0),
-            'formattedSizeInBytes' => $damAsset->file->getFormattedSizeInBytes(false),
-            'dimensions' => $damAsset->file->getDimensions(),
-            'isApproved' => $damAsset->approved,
+            'formattedSize' => $siloAsset->file->getFormattedSize(0),
+            'formattedSizeInBytes' => $siloAsset->file->getFormattedSizeInBytes(false),
+            'dimensions' => $siloAsset->file->getDimensions(),
+            'isApproved' => $siloAsset->approved,
             'canReplaceFile' => $canReplaceFile,
-            'canEdit' => $damAsset->getIsEditable(),
+            'canEdit' => $siloAsset->getIsEditable(),
             'tabs' => $tabs,
             'fieldsHtml' => $fieldsHtml,
 //           TODO: Enable deleteing once template sorted
@@ -180,16 +180,16 @@ class DamAssetsController extends BaseEntriesController
         ]);
     }
 
-    public function actionUploadDamAssets()
+    public function actionUploadSiloAssets()
     {
         // Do they have permission?
-        $this->requirePermission('dam-createDamAssets');
+        $this->requirePermission('silo-createSiloAssets');
 
         $response = Craft::$app->runAction('assets/upload');
 
         $asset = Craft::$app->assets->getAssetById($response->data['assetId']);
 
-        $damAsset = new DamAsset([
+        $siloAsset = new SiloAsset([
             'title' => $asset->title,
             'uploaderId' => $asset->uploaderId,
             'assetId' => $asset->id,
@@ -201,60 +201,60 @@ class DamAssetsController extends BaseEntriesController
             'focalPoint' => $asset->hasFocalPoint ? $asset->focalPoint : null,
         ]);
 
-        if (!Craft::$app->elements->saveElement($damAsset)) {
-            throw new Exception("Couldn't create DAM asset");
+        if (!Craft::$app->elements->saveElement($siloAsset)) {
+            throw new Exception("Couldn't create Silo asset");
         }
 
         return $this->asJson([
             'success' => true,
-            'damAssetId' => $damAsset->id
+            'siloAssetId' => $siloAsset->id
         ]);
     }
 
     /**
-     * Saves a DAM asset.
+     * Saves a Silo asset.
      *
      * @return Response|null
      * @throws ServerErrorHttpException
      */
-    public function actionSaveDamAsset()
+    public function actionSaveSiloAsset()
     {
         $this->requirePostRequest();
 
-        $damAsset = $this->_getDamAssetModel();
+        $siloAsset = $this->_getSiloAssetModel();
 
-        $damAssetVariable = $this->request->getValidatedBodyParam('damAssetVariable') ?? 'damAsset';
+        $siloAssetVariable = $this->request->getValidatedBodyParam('siloAssetVariable') ?? 'siloAsset';
 
         // Do they have permission?
-        $this->enforceEditDamAssetPermissions($damAsset);
+        $this->enforceEditSiloAssetPermissions($siloAsset);
 
         if (Craft::$app->getIsMultiSite()) {
             // Make sure they have access to this site
-            $this->requirePermission('editSite:' . $damAsset->getSite()->uid);
+            $this->requirePermission('editSite:' . $siloAsset->getSite()->uid);
         }
 
 //        TODO: allow renaming of linked file
-//        $damAsset->file->newFilename = $this->request->getParam('filename');
+//        $siloAsset->file->newFilename = $this->request->getParam('filename');
 
         // Populate the entry with post data
-        $this->_populateEntryModel($damAsset);
+        $this->_populateEntryModel($siloAsset);
 
         // Save the asset
-        $damAsset->setScenario(Element::SCENARIO_LIVE);
+        $siloAsset->setScenario(Element::SCENARIO_LIVE);
 
-        if (!Craft::$app->getElements()->saveElement($damAsset)) {
+        if (!Craft::$app->getElements()->saveElement($siloAsset)) {
             if ($this->request->getAcceptsJson()) {
                 return $this->asJson([
                     'success' => false,
-                    'errors' => $damAsset->getErrors(),
+                    'errors' => $siloAsset->getErrors(),
                 ]);
             }
 
-            $this->setFailFlash(Craft::t('dam', 'Couldn’t save DAM asset.'));
+            $this->setFailFlash(Craft::t('silo', 'Couldn’t save Silo asset.'));
 
-            // Send the DAM asset back to the template
+            // Send the Silo asset back to the template
             Craft::$app->getUrlManager()->setRouteParams([
-                $damAssetVariable => $damAsset
+                $siloAssetVariable => $siloAsset
             ]);
 
             return null;
@@ -263,85 +263,85 @@ class DamAssetsController extends BaseEntriesController
         if ($this->request->getAcceptsJson()) {
             return $this->asJson([
                 'success' => true,
-                'id' => $damAsset->id,
-                'title' => $damAsset->title,
-                'url' => $damAsset->getUrl(),
-                'cpEditUrl' => $damAsset->getCpEditUrl()
+                'id' => $siloAsset->id,
+                'title' => $siloAsset->title,
+                'url' => $siloAsset->getUrl(),
+                'cpEditUrl' => $siloAsset->getCpEditUrl()
             ]);
         }
-        $this->setSuccessFlash(Craft::t('dam', 'DAM asset saved.'));
-        return $this->redirectToPostedUrl($damAsset);
+        $this->setSuccessFlash(Craft::t('silo', 'Silo asset saved.'));
+        return $this->redirectToPostedUrl($siloAsset);
     }
 
 
     /**
-     * Fetches or creates a DamAsset.
+     * Fetches or creates a SiloAsset.
      *
-     * @return DamAsset
+     * @return SiloAsset
      * @throws BadRequestHttpException if the requested category group doesn't exist
      * @throws NotFoundHttpException if the requested category cannot be found
      */
-    private function _getDamAssetModel(): DamAsset
+    private function _getSiloAssetModel(): SiloAsset
     {
-        $damAssetId = $this->request->getBodyParam('sourceId');
+        $siloAssetId = $this->request->getBodyParam('sourceId');
         $siteId = $this->request->getBodyParam('siteId');
 
-        if ($damAssetId) {
-            $damAsset = Craft::$app->elements->getElementById($damAssetId, DamAsset::class, $siteId);
-            if (!$damAsset) {
-                throw new NotFoundHttpException('DAM asset not found');
+        if ($siloAssetId) {
+            $siloAsset = Craft::$app->elements->getElementById($siloAssetId, SiloAsset::class, $siteId);
+            if (!$siloAsset) {
+                throw new NotFoundHttpException('Silo asset not found');
             }
         } else {
-            $damAsset = new DamAsset();
+            $siloAsset = new SiloAsset();
             if ($siteId) {
-                $damAsset->siteId = $siteId;
+                $siloAsset->siteId = $siteId;
             }
         }
 
-        return $damAsset;
+        return $siloAsset;
     }
 
     /**
-     * Populates a DAM Asset with post data.
+     * Populates a Silo Asset with post data.
      *
-     * @param DamAsset $damAsset
+     * @param SiloAsset $siloAsset
      */
-    private function _populateEntryModel(DamAsset $damAsset)
+    private function _populateEntryModel(SiloAsset $siloAsset)
     {
-        $damAsset->slug = $this->request->getBodyParam('slug', $damAsset->slug);
+        $siloAsset->slug = $this->request->getBodyParam('slug', $siloAsset->slug);
 
         if (($approved = $this->request->getBodyParam('approved')) !== null) {
-            $damAsset->approved = $approved ?: 0;
+            $siloAsset->approved = $approved ?: 0;
         }
 
         if (($postDate = $this->request->getBodyParam('postDate')) !== null) {
-            $damAsset->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
+            $siloAsset->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
         }
         if (($expiryDate = $this->request->getBodyParam('expiryDate')) !== null) {
-            $damAsset->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
+            $siloAsset->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
         }
 
         $enabledForSite = $this->enabledForSiteValue();
         if (is_array($enabledForSite)) {
             // Set the global status to true if it's enabled for *any* sites, or if already enabled.
-            $damAsset->enabled = in_array(true, $enabledForSite, false) || $damAsset->enabled;
+            $siloAsset->enabled = in_array(true, $enabledForSite, false) || $siloAsset->enabled;
         } else {
-            $damAsset->enabled = (bool)$this->request->getBodyParam('enabled', $damAsset->enabled);
+            $siloAsset->enabled = (bool)$this->request->getBodyParam('enabled', $siloAsset->enabled);
         }
-        $damAsset->setEnabledForSite($enabledForSite ?? $damAsset->getEnabledForSite());
-        $damAsset->title = $this->request->getBodyParam('title', $damAsset->title);
+        $siloAsset->setEnabledForSite($enabledForSite ?? $siloAsset->getEnabledForSite());
+        $siloAsset->title = $this->request->getBodyParam('title', $siloAsset->title);
 
         $fieldsLocation = $this->request->getParam('fieldsLocation', 'fields');
-        $damAsset->setFieldValuesFromRequest($fieldsLocation);
+        $siloAsset->setFieldValuesFromRequest($fieldsLocation);
 
         // Author
-        $uploaderId = $this->request->getBodyParam('author', ($damAsset->uploaderId ?: Craft::$app->getUser()->getIdentity()->id));
+        $uploaderId = $this->request->getBodyParam('author', ($siloAsset->uploaderId ?: Craft::$app->getUser()->getIdentity()->id));
 
         if (is_array($uploaderId)) {
             $uploaderId = $authorId[0] ?? null;
         }
 
-        $damAsset->uploaderId = $uploaderId;
+        $siloAsset->uploaderId = $uploaderId;
     }
 
     /**
@@ -366,26 +366,26 @@ class DamAssetsController extends BaseEntriesController
 
 
     /**
-     * @param DamAsset $damAsset
+     * @param SiloAsset $siloAsset
      * @param bool $duplicate
      * @throws ForbiddenHttpException
      */
-    protected function enforceEditDamAssetPermissions(DamAsset $damAsset, bool $duplicate = false)
+    protected function enforceEditSiloAssetPermissions(SiloAsset $siloAsset, bool $duplicate = false)
     {
-        // Make sure the user is allowed to edit DAM assets
-        $this->requirePermission('dam-editDamAssets');
+        // Make sure the user is allowed to edit Silo assets
+        $this->requirePermission('silo-editSiloAssets');
 
-        // Is it a new DAM asset?
-        if (!$damAsset->id || $duplicate) {
-            // Make sure they have permission to create new DAM assets
-            $this->requirePermission('dam-createDamAssets');
+        // Is it a new Silo asset?
+        if (!$siloAsset->id || $duplicate) {
+            // Make sure they have permission to create new Silo assets
+            $this->requirePermission('silo-createSiloAssets');
             return;
         }
 
         // If not owned by them, can they edit?
         $userId = Craft::$app->getUser()->getId();
-        if ($damAsset->uploaderId != $userId) {
-            $this->requirePermission('dam-editPeerDamAssets');
+        if ($siloAsset->uploaderId != $userId) {
+            $this->requirePermission('silo-editPeerSiloAssets');
         }
     }
 }

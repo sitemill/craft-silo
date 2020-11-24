@@ -5,7 +5,7 @@
  * @license https://craftcms.github.io/license/
  */
 
-namespace sitemill\dam\elements\actions;
+namespace sitemill\silo\elements\actions;
 
 use Craft;
 use craft\base\Element;
@@ -16,7 +16,7 @@ use craft\elements\db\ElementQueryInterface;
 /**
  * @author    SiteMill
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
 class Approve extends ElementAction
@@ -36,7 +36,7 @@ class Approve extends ElementAction
      */
     public function getTriggerHtml()
     {
-        return Craft::$app->getView()->renderTemplate('dam/_components/elementactions/approve/trigger.twig');
+        return Craft::$app->getView()->renderTemplate('silo/_components/elementactions/approve/trigger.twig');
     }
 
 
@@ -63,9 +63,9 @@ class Approve extends ElementAction
             $this->setMessage(Craft::t('app', 'Status updated, with some failures due to validation errors.'));
         } else {
             if (count($elements) === 1) {
-                $this->setMessage(Craft::t('dam', 'Asset approved.'));
+                $this->setMessage(Craft::t('silo', 'Asset approved.'));
             } else {
-                $this->setMessage(Craft::t('dam', 'Assets approved.'));
+                $this->setMessage(Craft::t('silo', 'Assets approved.'));
             }
         }
 

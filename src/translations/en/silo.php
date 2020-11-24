@@ -8,9 +8,9 @@
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
 return [
-    'DAM plugin loaded' => 'DAM plugin loaded',
+    'Silo plugin loaded' => 'Silo plugin loaded',
 ];

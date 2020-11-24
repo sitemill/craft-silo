@@ -6,9 +6,9 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\services;
+namespace sitemill\silo\services;
 
-use sitemill\dam\elements\DamAsset;
+use sitemill\silo\elements\SiloAsset;
 
 use Craft;
 use craft\helpers\FileHelper;
@@ -18,7 +18,7 @@ use ZipArchive;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
 class Download extends Component
@@ -34,7 +34,7 @@ class Download extends Component
     {
 
         // Fetch the assets
-        $assets = DamAsset::find()
+        $assets = SiloAsset::find()
             ->id($assetIds)
             ->limit(null)
             ->all();
@@ -67,6 +67,6 @@ class Download extends Component
             return $tempFile;
         }
 
-        throw new Exception(Craft::t('dam', 'Failed to generate the archive'));
+        throw new Exception(Craft::t('silo', 'Failed to generate the archive'));
     }
 }

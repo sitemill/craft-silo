@@ -6,11 +6,11 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\services;
+namespace sitemill\silo\services;
 
 use craft\errors\EntryTypeNotFoundException;
-use sitemill\dam\Library;
-use sitemill\dam\helpers\Sources;
+use sitemill\silo\Library;
+use sitemill\silo\helpers\Sources;
 
 use Craft;
 use craft\base\Component;
@@ -18,7 +18,7 @@ use yii\base\Exception;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  *
  */

@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\assetbundles;
+namespace sitemill\silo\assetbundles;
 
 use Craft;
 use craft\web\AssetBundle;
@@ -15,10 +15,10 @@ use craft\web\View;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
-class DamAssets extends AssetBundle
+class SiloAssets extends AssetBundle
 {
     // Public Methods
     // =========================================================================
@@ -28,14 +28,14 @@ class DamAssets extends AssetBundle
      */
     public function init()
     {
-        $this->sourcePath = '@sitemill/dam/assetbundles/dist';
+        $this->sourcePath = '@sitemill/silo/assetbundles/dist';
         $this->css = [
-            ['app.scss', 'position' => \yii\web\View::POS_END]
+            ['silo.scss', 'position' => \yii\web\View::POS_END]
         ];
         $this->js = [
+            'silo.js'
 //            'manifest.js',
-//            'vendor.js',
-            'dam.js'
+//            'vendor.js'
         ];
         parent::init();
     }

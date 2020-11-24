@@ -6,25 +6,25 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\fields;
+namespace sitemill\silo\fields;
 
 use craft\fields\BaseRelationField;
-use sitemill\dam\elements\DamAsset;
+use sitemill\silo\elements\SiloAsset;
 
-class DamAssetsField extends BaseRelationField
+class SiloAssetsField extends BaseRelationField
 {
     public static function displayName(): string
     {
-        return \Craft::t('dam', 'DAM Assets');
+        return \Craft::t('silo', 'Silo Assets');
     }
 
     protected static function elementType(): string
     {
-        return DamAsset::class;
+        return SiloAsset::class;
     }
 
     public static function defaultSelectionLabel(): string
     {
-        return \Craft::t('dam', 'Select an asset');
+        return \Craft::t('silo', 'Select an asset');
     }
 }

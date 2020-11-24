@@ -6,18 +6,18 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\controllers;
+namespace sitemill\silo\controllers;
 
 use Craft;
 use craft\web\Controller;
-use sitemill\dam\Dam;
-use sitemill\dam\elements\DamAsset;
-use sitemill\dam\services\DamAssets;
+use sitemill\silo\Silo;
+use sitemill\silo\elements\SiloAsset;
+use sitemill\silo\services\SiloAssets;
 use yii\base\Exception;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
 class SettingsController extends Controller
@@ -30,7 +30,7 @@ class SettingsController extends Controller
      */
     public function actionIndex()
     {
-        return $this->renderTemplate('dam/settings',['settings' => Dam::$plugin->getSettings()]);
+        return $this->renderTemplate('silo/settings',['settings' => Silo::$plugin->getSettings()]);
     }
 
     /**
@@ -42,13 +42,13 @@ class SettingsController extends Controller
         $response = $this->request->getBodyParams();
 
         $fieldLayout = Craft::$app->getFields()->assembleLayoutFromPost();
-        $fieldLayout->type = DamAsset::class;
+        $fieldLayout->type = SiloAsset::class;
         if (!Craft::$app->fields->saveLayout($fieldLayout)) {
             $this->setFailFlash(Craft::t('app', 'Couldn’t save field layout.'));
             return null;
         }
 
-        $plugin = Craft::$app->getPlugins()->getPlugin('dam');
+        $plugin = Craft::$app->getPlugins()->getPlugin('silo');
 
         if (!Craft::$app->getPlugins()->savePluginSettings($plugin, $response)) {
             $this->setFailFlash(Craft::t('app', 'Couldn’t save plugin settings.'));

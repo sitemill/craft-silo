@@ -1,10 +1,10 @@
 {% extends "_layouts/elementindex" %}
 
-{% set title = "Asset Manager"|t('dam') %}
-{% set elementType = 'sitemill\\dam\\elements\\DamAsset' %}
-{% set settings = craft.app.getPlugins().getPlugin('dam').getSettings() %}
+{% set title = "Asset Manager"|t('silo') %}
+{% set elementType = 'sitemill\\silo\\elements\\SiloAsset' %}
+{% set settings = craft.app.getPlugins().getPlugin('silo').getSettings() %}
 
-{% do view.registerAssetBundle("sitemill\\dam\\assetbundles\\DamAssets") %}
+{% do view.registerAssetBundle("sitemill\\silo\\assetbundles\\SiloAssets") %}
 
 {% set allowedFileExtensions = [] %}
 
@@ -17,7 +17,7 @@
         {% if settings.assetsHandle != null %}
             {{ parent() }}
         {% else %}
-            {{ "No asset volume selected in Digital Asset Manager's settings."|t('dam') }}
+            {{ "No asset volume selected in Digital Asset Manager's settings."|t('silo') }}
         {% endif %}
     {% endblock %}
 
@@ -28,19 +28,19 @@
     {% js %}
         (function($) {
 
-        if (typeof Craft.Dam === 'undefined') {
-        Craft.Dam = {};
+        if (typeof Craft.Silo === 'undefined') {
+        Craft.Silo = {};
         }
 
-        var elementTypeClass = 'sitemill\\dam\\elements\\DamAsset';
+        var elementTypeClass = 'sitemill\\silo\\elements\\SiloAsset';
 
-        Craft.Dam.DamAssetIndex = Craft.BaseElementIndex.extend({
+        Craft.Silo.SiloAssetIndex = Craft.BaseElementIndex.extend({
         afterInit: function() {
         // Hide the approval button
-        var label = Craft.t('dam', 'Upload Assets');
+        var label = Craft.t('silo', 'Upload Assets');
 
         this.$newEventBtnGroup = $('<div class="btngroup submit"/>');
-        this.$newEventBtn = $('<a id="upload-dam-assets" class="btn submit icon" data-icon="upload">' + label + '</a>').appendTo(this.$newEventBtnGroup);
+        this.$newEventBtn = $('<a id="upload-silo-assets" class="btn submit icon" data-icon="upload">' + label + '</a>').appendTo(this.$newEventBtnGroup);
 
         this.addButton(this.$newEventBtnGroup);
 
@@ -50,15 +50,15 @@
         this.base();
         if (this.$source.data('key') != 'staged')
         {
-        $('#sitemill-dam-elements-actions-Approve-actiontrigger').hide();
-        console.log($('#sitemill-dam-elements-actions-Approve-actiontrigger'))
+        $('#sitemill-silo-elements-actions-Approve-actiontrigger').hide();
+        console.log($('#sitemill-silo-elements-actions-Approve-actiontrigger'))
         }
         }
         });
 
         // Register it!
         try {
-        Craft.registerElementIndexClass(elementTypeClass, Craft.Dam.DamAssetIndex);
+        Craft.registerElementIndexClass(elementTypeClass, Craft.Silo.SiloAssetIndex);
         } catch (e) {
         // Already registered
         }
@@ -85,13 +85,13 @@
            },
        })
        .use(Dashboard, {
-            trigger: '#upload-dam-assets',
+            trigger: '#upload-silo-assets',
             closeModalOnClickOutside: true,
             proudlyDisplayPoweredByUppy: false,
             closeAfterFinish: true
        })
        .use(XHRUpload,{
-            endpoint: '/dam/assets/upload',
+            endpoint: '/silo/assets/upload',
             fieldName: 'assets-upload',
             headers: { 'X-CSRF-Token': '{{ craft.app.request.csrfToken }}' },
             timeout: 180 * 1000

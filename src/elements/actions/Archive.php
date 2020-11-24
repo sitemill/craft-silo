@@ -6,19 +6,19 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\elements\actions;
+namespace sitemill\silo\elements\actions;
 
 use Craft;
 use craft\base\ElementAction;
 use craft\elements\db\ElementQueryInterface;
-use sitemill\dam\elements\DamAsset;
-use sitemill\dam\Library;
+use sitemill\silo\elements\SiloAsset;
+use sitemill\silo\Library;
 
 
 /**
  * @author    SiteMill
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
 
@@ -44,7 +44,7 @@ class Archive extends ElementAction
      */
     public function getTriggerLabel(): string
     {
-        return Craft::t('dam', 'Archive');
+        return Craft::t('silo', 'Archive');
     }
 
     /**

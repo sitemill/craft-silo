@@ -6,10 +6,10 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\elements;
+namespace sitemill\silo\elements;
 
-use sitemill\dam\elements\db\DamAssetQuery;
-use sitemill\dam\elements\actions\Approve;
+use sitemill\silo\elements\db\SiloAssetQuery;
+use sitemill\silo\elements\actions\Approve;
 
 use Craft;
 use craft\db\Query;
@@ -30,10 +30,10 @@ use craft\elements\actions\SetStatus;
 /**
  * @author    SiteMill
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
-class DamAsset extends Element
+class SiloAsset extends Element
 {
     const STATUS_STAGED = 'staged';
 
@@ -113,7 +113,7 @@ class DamAsset extends Element
      */
     public static function displayName(): string
     {
-        return Craft::t('dam', 'DAM Asset');
+        return Craft::t('silo', 'Silo Asset');
     }
 
     /**
@@ -121,7 +121,7 @@ class DamAsset extends Element
      */
     public static function pluralDisplayName(): string
     {
-        return Craft::t('dam', 'DAM Assets');
+        return Craft::t('silo', 'Silo Assets');
     }
 
     /**
@@ -161,7 +161,7 @@ class DamAsset extends Element
      */
     public static function find(): ElementQueryInterface
     {
-        return new DamAssetQuery(static::class);
+        return new SiloAssetQuery(static::class);
     }
 
     /**
@@ -169,7 +169,7 @@ class DamAsset extends Element
      */
     protected static function defineSources(string $context = null): array
     {
-        $stagedCount = count(DamAsset::find()->status('staged')->all());
+        $stagedCount = count(SiloAsset::find()->status('staged')->all());
 
         return [
             [
@@ -254,8 +254,8 @@ class DamAsset extends Element
             'imageSize' => ['label' => Craft::t('app', 'Dimensions')],
             'width' => ['label' => Craft::t('app', 'Image Width')],
             'height' => ['label' => Craft::t('app', 'Image Height')],
-            'downloads' => \Craft::t('dam', 'Downloads'),
-            'uploader' => \Craft::t('dam', 'Uploader'),
+            'downloads' => \Craft::t('silo', 'Downloads'),
+            'uploader' => \Craft::t('silo', 'Uploader'),
         ];
     }
 
@@ -306,7 +306,7 @@ class DamAsset extends Element
 
         return true;
 //        TODO:
-//        return \Craft::$app->user->checkPermission('edit-dam-assets:'.$this->getType()->id);
+//        return \Craft::$app->user->checkPermission('edit-silo-assets:'.$this->getType()->id);
     }
 
     /**
@@ -314,7 +314,7 @@ class DamAsset extends Element
      */
     public function getFieldLayout()
     {
-        return \Craft::$app->fields->getLayoutByType(DamAsset::class);
+        return \Craft::$app->fields->getLayoutByType(SiloAsset::class);
     }
 
 
@@ -367,7 +367,7 @@ class DamAsset extends Element
     {
         if ($isNew) {
             \Craft::$app->db->createCommand()
-                ->insert('{{%dam_assets}}', [
+                ->insert('{{%silo_assets}}', [
                     'id' => $this->id,
                     'uploaderId' => (int)$this->uploaderId,
                     'assetId' => (int)$this->assetId,
@@ -383,7 +383,7 @@ class DamAsset extends Element
                 ->execute();
         } else {
             \Craft::$app->db->createCommand()
-                ->update('{{%dam_assets}}', [
+                ->update('{{%silo_assets}}', [
                     'uploaderId' => (int)$this->uploaderId,
                     'assetId' => (int)$this->assetId,
                     'filename' => $this->filename,
@@ -438,7 +438,7 @@ class DamAsset extends Element
     {
 
         // The slug *might* not be set if this is a Draft and they've deleted it for whatever reason
-        $path = 'admin/dam-assets/' . $this->getSourceId() .
+        $path = 'admin/silo-assets/' . $this->getSourceId() .
             ($this->slug && strpos($this->slug, '__') !== 0 ? '-' . $this->slug : '');
 
         $params = [];
@@ -467,7 +467,7 @@ class DamAsset extends Element
 
             $map = (new Query())
                 ->select(['id as source', 'assetId as target'])
-                ->from(['{{%dam_assets}}'])
+                ->from(['{{%silo_assets}}'])
                 ->where(['and', ['id' => $sourceElementIds], ['not', ['assetId' => null]]])
                 ->one();
 
@@ -525,7 +525,7 @@ class DamAsset extends Element
     }
 
     /**
-     * Returns the user that uploaded the DAM asset, if known.
+     * Returns the user that uploaded the Silo asset, if known.
      */
     public function getUploader()
     {
@@ -546,7 +546,7 @@ class DamAsset extends Element
     }
 
     /**
-     * Sets the DAM asset's uploader.
+     * Sets the Silo asset's uploader.
      */
     public function setUploader(User $uploader = null)
     {

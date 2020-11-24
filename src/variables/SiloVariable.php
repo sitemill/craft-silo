@@ -6,12 +6,12 @@
  * @copyright Copyright (c) 2020 SiteMill
  */
 
-namespace sitemill\dam\variables;
+namespace sitemill\silo\variables;
 
 use craft\elements\Asset;
 use craft\helpers\UrlHelper;
-use sitemill\dam\elements\DamAsset;
-use sitemill\dam\Library;
+use sitemill\silo\elements\SiloAsset;
+use sitemill\silo\Library;
 
 use Craft;
 use Traversable;
@@ -19,10 +19,10 @@ use yii\db\Exception;
 
 /**
  * @author    SiteMill
- * @package   Dam
+ * @package   Silo
  * @since     1.0.0
  */
-class DamVariable
+class SiloVariable
 {
     public function settings()
     {
@@ -36,7 +36,7 @@ class DamVariable
 
     public function download($assetsIds)
     {
-        return UrlHelper::actionUrl('/dam/download/', [
+        return UrlHelper::actionUrl('/silo/download/', [
             'files' => $assetsIds
         ]);
     }

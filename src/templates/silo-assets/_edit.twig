@@ -1,10 +1,10 @@
 {% extends "_layouts/element" %}
 {% import "_includes/forms" as forms %}
 
-{% set redirectUrl = "dam-assets/#live" %}
+{% set redirectUrl = "silo-assets/#live" %}
 {% set canUpdateSource = canEdit %}
-{% set saveSourceAction = 'dam/dam-assets/save-dam-asset' %}
-{% set deleteSourceAction = 'dam/dam-assets/delete-dam-asset' %}
+{% set saveSourceAction = 'silo/silo-assets/save-silo-asset' %}
+{% set deleteSourceAction = 'silo/silo-assets/delete-silo-asset' %}
 
 {% block actionButton %}
     <div class="btngroup">
@@ -20,7 +20,7 @@
 
     {% if not isApproved %}
         <input type="hidden" id="approved" name="approved" value="0">
-        <button type="button" id="approvedBtn" class="btn btn--approved">&#10004; {{ "Approve"|t('dam') }}</button>
+        <button type="button" id="approvedBtn" class="btn btn--approved">&#10004; {{ "Approve"|t('silo') }}</button>
     {% endif %}
 
     {% js on ready %}
@@ -53,13 +53,13 @@
         errors: element.getErrors('newLocation'),
     }) }}
     {{ parent() }}
-    {% hook 'dam.assets.edit.content' %}
+    {% hook 'silo.assets.edit.content' %}
 {% endblock %}
 
 {% block details %}
     {{ previewHtml|raw }}
     {{ parent() }}
-    {% hook "dam.assets.edit.details" %}
+    {% hook "silo.assets.edit.details" %}
 {% endblock %}
 
 {% block settings %}
@@ -70,7 +70,7 @@
         value: element.file.filename,
         errors: element.file.getErrors('newLocation'),
     }) }}
-    {% hook "dam.assets.edit.settings" %}
+    {% hook "silo.assets.edit.settings" %}
 {% endblock %}
 
 {% block meta %}
@@ -123,7 +123,7 @@
             <div id="dimensions-value" class="value">{{ dimensions }}</div>
         </div>
     {% endif %}
-    {% hook "dam.assets.edit.meta" %}
+    {% hook "silo.assets.edit.meta" %}
 {% endblock %}
 
 

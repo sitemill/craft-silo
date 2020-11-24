@@ -1,5 +1,5 @@
 {
-  "name": "sitemill/craft-dam",
+  "name": "sitemill/craft-silo",
   "description": "Digital asset manager for Craft CMS 3",
   "type": "craft-plugin",
   "version": "1.0.0",
@@ -8,11 +8,12 @@
     "cms",
     "craftcms",
     "craft-plugin",
-    "dam"
+    "dam",
+    "silo"
   ],
   "support": {
-    "docs": "https://github.com/sitemill/craft-dam/blob/master/README.md",
-    "issues": "https://github.com/sitemill/craft-dam/issues"
+    "docs": "https://github.com/sitemill/craft-silo/blob/master/README.md",
+    "issues": "https://github.com/sitemill/craft-silo/issues"
   },
   "license": "MIT",
   "authors": [
@@ -31,21 +32,21 @@
   },
   "autoload": {
     "psr-4": {
-      "sitemill\\dam\\": "src/"
+      "sitemill\\silo\\": "src/"
     }
   },
   "extra": {
-    "name": "Dam",
-    "handle": "dam",
+    "name": "Silo",
+    "handle": "silo",
     "developer": "SiteMill",
     "developerUrl": "https://sitemill.co",
-    "documentationUrl": "https://github.com/sitemill/craft-dam/blob/master/README.md",
-    "changelogUrl": "https://raw.githubusercontent.com/sitemill/craft-dam/master/CHANGELOG.md",
+    "documentationUrl": "https://github.com/sitemill/craft-silo/blob/master/README.md",
+    "changelogUrl": "https://raw.githubusercontent.com/sitemill/craft-silo/master/CHANGELOG.md",
     "components": {
-      "lightbox": "sitemill\\dam\\services\\Lightbox",
-      "asset": "sitemill\\dam\\elements\\DamAsset",
-      "download": "sitemill\\dam\\services\\Download"
+      "lightbox": "sitemill\\silo\\services\\Lightbox",
+      "asset": "sitemill\\silo\\elements\\SiloAsset",
+      "download": "sitemill\\silo\\services\\Download"
     },
-    "class": "sitemill\\dam\\Dam"
+    "class": "sitemill\\silo\\Silo"
   }
 }
