@@ -288,7 +288,10 @@ class SiloAsset extends Element
 
     public function getThumbUrl(int $size)
     {
-        return $this->file->getThumbUrl($size);
+        if ($this->file) {
+            return $this->file->getThumbUrl($size);
+        }
+        return false;
     }
 
     protected static function defineActions(string $source = null): array
