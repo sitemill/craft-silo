@@ -197,16 +197,7 @@
         var $dimensionsVal = $('#dimensions-value');
         if (data.result.dimensions) {
         if (!$dimensionsVal.length) {
-        $('
-        <div class="data">' +
-            '
-            <div class="heading">' + {{ 'Dimensions'|t('app')|json_encode|raw }} + '</div>
-            ' +
-            '
-            <div id="dimensions-value" class="value"></div>
-            ' +
-            '
-        </div>').appendTo($('#meta-details'));
+        $('<div class="data">' + '<div class="heading">' + {{ 'Dimensions'|t('app')|json_encode|raw }} + '</div>' + '<div id="dimensions-value" class="value"></div>' +'</div>').appendTo($('#meta-details'));
         $dimensionsVal = $('#dimensions-value');
         }
         $dimensionsVal.text(data.result.dimensions);
