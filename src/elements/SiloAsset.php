@@ -220,28 +220,39 @@ class SiloAsset extends Element
                 return $uploader ? Cp::elementHtml($uploader) : '';
 
             case 'filename':
-                return Html::tag('span', Html::encode($this->file->filename), [
-                    'class' => 'break-word',
-                ]);
-
+                if ($this->file) {
+                    return Html::tag('span', Html::encode($this->file->filename), [
+                        'class' => 'break-word',
+                    ]);
+                }
+                return '';
             case 'kind':
                 return AssetsHelper::getFileKindLabel($this->kind);
 
             case 'size':
-                if ($this->file->size === null) {
-                    return '';
+                if ($this->file) {
+                    if ($this->file->size === null) {
+                        return '';
+                    }
+                    return Html::tag('span', $this->file->getFormattedSize(0), [
+                        'title' => $this->file->getFormattedSizeInBytes(false),
+                    ]);
                 }
-                return Html::tag('span', $this->file->getFormattedSize(0), [
-                    'title' => $this->file->getFormattedSizeInBytes(false),
-                ]);
+                return '';
 
             case 'imageSize':
-                return $this->file->getDimensions() ?? '';
+                if ($this->file) {
+                    return $this->file->getDimensions() ?? '';
+                }
+                return '';
 
             case 'width':
             case 'height':
-                $size = $this->file->$attribute;
-                return ($size ? $size . 'px' : '');
+                if ($this->file) {
+                    $size = $this->file->$attribute;
+                    return ($size ? $size . 'px' : '');
+                }
+                return '';
         }
 
         return parent::tableAttributeHtml($attribute);
@@ -304,7 +315,6 @@ class SiloAsset extends Element
             Approve::class
         ];
     }
-
 
 
     /**

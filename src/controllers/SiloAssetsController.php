@@ -61,8 +61,14 @@ class SiloAssetsController extends BaseEntriesController
      */
     public function actionEditSiloAsset(int $siloAssetId, SiloAsset $siloAsset = null, string $site = null): Response
     {
+        $file = null;
+        $volume = null;
+        $previewHtml = null;
+        $canReplaceFile = null;
+
         $sitesService = Craft::$app->getSites();
         $editableSiteIds = $sitesService->getEditableSiteIds();
+
         if ($site !== null) {
             $siteHandle = $site;
             $site = $sitesService->getSiteByHandle($siteHandle);
@@ -90,12 +96,12 @@ class SiloAssetsController extends BaseEntriesController
             }
         }
 
+        // Get the file
         $file = $siloAsset->file;
 
         // Do they have permission?
         $this->enforceEditSiloAssetPermissions($siloAsset);
 
-        $volume = $file->getVolume();
 
         $crumbs = [
             [
@@ -104,44 +110,49 @@ class SiloAssetsController extends BaseEntriesController
             ]
         ];
 
+        if ($file) {
+
+            $volume = $file->getVolume();
+
         // Show thumbnail
-        try {
-            // Is the image editable, and is the user allowed to edit?
-            $userSession = Craft::$app->getUser();
+            try {
+                // Is the image editable, and is the user allowed to edit?
+                $userSession = Craft::$app->getUser();
 
-            $editable = (
-                $file->getSupportsImageEditor() &&
-                $userSession->checkPermission("editImagesInVolume:{$volume->uid}") &&
-                ($userSession->getId() == $file->uploaderId || $userSession->checkPermission("editPeerImagesInVolume:{$volume->uid}"))
-            );
+                $editable = (
+                    $file->getSupportsImageEditor() &&
+                    $userSession->checkPermission("editImagesInVolume:{$volume->uid}") &&
+                    ($userSession->getId() == $file->uploaderId || $userSession->checkPermission("editPeerImagesInVolume:{$volume->uid}"))
+                );
 
-            $previewHtml = '<div id="preview-thumb-container" class="preview-thumb-container">' .
-                '<div class="preview-thumb">' .
-                $file->getPreviewThumbImg(350, 190) .
-                '</div>' .
-                '<div class="buttons">';
+                $previewHtml = '<div id="preview-thumb-container" class="preview-thumb-container">' .
+                    '<div class="preview-thumb">' .
+                    $file->getPreviewThumbImg(350, 190) .
+                    '</div>' .
+                    '<div class="buttons">';
 
-            if (Craft::$app->getAssets()->getAssetPreviewHandler($file) !== null) {
-                $previewHtml .= '<div class="btn" id="preview-btn">' . Craft::t('app', 'Preview') . '</div>';
-            }
+                if (Craft::$app->getAssets()->getAssetPreviewHandler($file) !== null) {
+                    $previewHtml .= '<div class="btn" id="preview-btn">' . Craft::t('app', 'Preview') . '</div>';
+                }
 
 //            TODO: investigate editable images – can I create new Silo asset from crafts editor
 //            if ($editable) {
 //                $previewHtml .= '<div class="btn" id="edit-btn">' . Craft::t('app', 'Edit') . '</div>';
 //            }
 
-            $previewHtml .= '</div></div>';
-        } catch (NotSupportedException $e) {
-            // NBD
-            $previewHtml = '';
+                $previewHtml .= '</div></div>';
+            } catch (NotSupportedException $e) {
+                // NBD
+                $previewHtml = '';
+            }
         }
 
 //        TODO: not sure about this re: permissions
-        $userSession = Craft::$app->getUser();
-        $canReplaceFile = (
-            $userSession->checkPermission("deleteFilesAndFoldersInVolume:{$volume->uid}") &&
-            ($userSession->getId() == $file->uploaderId || $userSession->checkPermission("replacePeerFilesInVolume:{$volume->uid}"))
-        );
+//        $userSession = Craft::$app->getUser();
+//        $canReplaceFile = (
+//            $userSession->checkPermission("deleteFilesAndFoldersInVolume:{$volume->uid}") &&
+//            ($userSession->getId() == $file->uploaderId || $userSession->checkPermission("replacePeerFilesInVolume:{$volume->uid}"))
+//        );
 
 //        // TODO: Check permission on siloAsset
 //        try {
@@ -162,14 +173,14 @@ class SiloAssetsController extends BaseEntriesController
             'siteId' => $site->id,
             'element' => $siloAsset,
             'volume' => $volume,
-            'file' => $siloAsset->file,
+            'file' => $file,
             'slug' => $siloAsset->slug,
             'title' => trim($siloAsset->title) ?: Craft::t('app', 'Edit Asset'),
             'crumbs' => $crumbs,
             'previewHtml' => $previewHtml,
-            'formattedSize' => $siloAsset->file->getFormattedSize(0),
-            'formattedSizeInBytes' => $siloAsset->file->getFormattedSizeInBytes(false),
-            'dimensions' => $siloAsset->file->getDimensions(),
+            'formattedSize' => $file ? $file->getFormattedSize(0) : null,
+            'formattedSizeInBytes' => $file ? $file->getFormattedSizeInBytes(false) : null,
+            'dimensions' => $file ? $file->getDimensions() : null,
             'isApproved' => $siloAsset->approved,
             'canReplaceFile' => $canReplaceFile,
             'canEdit' => $siloAsset->getIsEditable(),

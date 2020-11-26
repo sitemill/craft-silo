@@ -7,16 +7,18 @@
 {% set deleteSourceAction = 'silo/silo-assets/delete-silo-asset' %}
 
 {% block actionButton %}
-    <div class="btngroup">
-        {#  TODO: add link to front-end page instead of directly to asset #}
-        <a class="btn" href="{{ file.url }}" target="_blank" data-icon="preview">{{ 'View'|t('app') }}</a>
-        <button type="button" id="download-btn" class="btn" data-icon="download">{{ 'Download'|t('app') }}</button>
-    </div>
+    {% if file %}
+        <div class="btngroup">
+            {# TODO: add link to front-end page instead of directly to asset #}
+            <a class="btn" href="{{ file.url }}" target="_blank" data-icon="preview">{{ 'View'|t('app') }}</a>
+            <button type="button" id="download-btn" class="btn" data-icon="download">{{ 'Download'|t('app') }}</button>
+        </div>
+    {% endif %}
 
-    {# TODO: think about this#}
-    {#    {% if canReplaceFile %}#}
-    {#        <button type="button" id="replace-btn" class="btn" data-icon="upload">{{ 'Replace file'|t('app') }}</button>#}
-    {#    {% endif %}#}
+    {# TODO: think about this #}
+    {# {% if canReplaceFile %} #}
+    {# <button type="button" id="replace-btn" class="btn" data-icon="upload">{{ 'Replace file'|t('app') }}</button> #}
+    {# {% endif %} #}
 
     {% if not isApproved %}
         <input type="hidden" id="approved" name="approved" value="0">
@@ -25,14 +27,14 @@
 
     {% js on ready %}
         $('#approvedBtn').on('click',function(){
-            $('#approved').val(1 - $('#approved').val()) ;
+        $('#approved').val(1 - $('#approved').val()) ;
         });
     {% endjs %}
 
     {% css %}
         input[value="1"] + #approvedBtn {
-            color:white !important;
-            background-color:rgb(0, 185, 56);
+        color:white !important;
+        background-color:rgb(0, 185, 56);
         }
 
         input[value="1"] + #approvedBtn:hover {
@@ -63,6 +65,7 @@
 {% endblock %}
 
 {% block settings %}
+    {% if file %}
     {{ forms.textField({
         label: 'Filename'|t('app'),
         id: 'filename',
@@ -70,11 +73,13 @@
         value: element.file.filename,
         errors: element.file.getErrors('newLocation'),
     }) }}
+    {% endif %}
     {% hook "silo.assets.edit.settings" %}
 {% endblock %}
 
 {% block meta %}
     <div class="data">
+        {% if file %}
         <h5 class="heading">{{ 'Location'|t('app') }}</h5>
         <div class="value">
             {{ volume.name|t('site') }}
@@ -82,6 +87,7 @@
                 → {{ element.file.folderPath|trim('/')|replace('/', ' → ') }}
             {% endif %}
         </div>
+        {% endif %}
         <h5 class="heading">{{ 'Downloads'|t('app') }}</h5>
         <div class="value">
             {{ element.downloads }}
@@ -102,7 +108,7 @@
 
     {{ parent() }}
 
-    {% set uploader = element.file.getUploader() %}
+    {% set uploader = element.getUploader() %}
     {% if uploader %}
         <div class="data">
             <h5 class="heading">{{ 'Uploaded by'|t('app') }}</h5>
@@ -126,115 +132,118 @@
     {% hook "silo.assets.edit.meta" %}
 {% endblock %}
 
+{% if file %}
+    {% js on ready %}
 
-{% js on ready %}
-    var assetId = {{ element.file.id|json_encode|raw }};
-    var $previewThumbContainer = $('#preview-thumb-container');
+        var assetId = {{ element.file.id|json_encode|raw }};
+        var $previewThumbContainer = $('#preview-thumb-container');
 
-    function updatePreviewThumb() {
-    $previewThumbContainer.addClass('loading');
-    Craft.postActionRequest('assets/preview-thumb', {
-    assetId: assetId,
-    width: 350,
-    height: 190
-    }, function(response, textStatus) {
-    $previewThumbContainer.removeClass('loading');
-    if (textStatus === 'success') {
-    $previewThumbContainer.find('img').replaceWith(response.img);
-    }
-    });
-    }
+        function updatePreviewThumb() {
+        $previewThumbContainer.addClass('loading');
+        Craft.postActionRequest('assets/preview-thumb', {
+        assetId: assetId,
+        width: 350,
+        height: 190
+        }, function(response, textStatus) {
+        $previewThumbContainer.removeClass('loading');
+        if (textStatus === 'success') {
+        $previewThumbContainer.find('img').replaceWith(response.img);
+        }
+        });
+        }
 
-    $('#download-btn').on('click', function() {
-    var $form = Craft.createForm().appendTo(Garnish.$bod);
-    $(Craft.getCsrfInput()).appendTo($form);
-    $('<input/>', {
-    type: 'hidden',
-    name: 'action',
-    value: 'assets/download-asset'
-    }).appendTo($form);
-    $('<input/>', {
-    type: 'hidden',
-    name: 'assetId',
-    value: assetId
-    }).appendTo($form);
-    $('<input/>', {
-    type: 'submit',
-    value: 'Submit',
-    }).appendTo($form);
-    $form.submit();
-    $form.remove();
-    });
+        $('#download-btn').on('click', function() {
+        var $form = Craft.createForm().appendTo(Garnish.$bod);
+        $(Craft.getCsrfInput()).appendTo($form);
+        $('<input/>', {
+        type: 'hidden',
+        name: 'action',
+        value: 'assets/download-asset'
+        }).appendTo($form);
+        $('<input/>', {
+        type: 'hidden',
+        name: 'assetId',
+        value: assetId
+        }).appendTo($form);
+        $('<input/>', {
+        type: 'submit',
+        value: 'Submit',
+        }).appendTo($form);
+        $form.submit();
+        $form.remove();
+        });
 
-    $('#replace-btn').on('click', function() {
-    var $fileInput = $('<input type="file" name="replaceFile" class="replaceFile hidden"/>')
-    .appendTo(Garnish.$bod);
-    var uploader = new Craft.Uploader($fileInput, {
-    url: Craft.getActionUrl('assets/replace-file'),
-    dropZone: null,
-    fileInput: $fileInput,
-    paramName: 'replaceFile',
-    events: {
-    fileuploadstart: function() {
-    $previewThumbContainer.addClass('loading');
-    },
-    fileuploaddone: function(event, data) {
-    if (data.result.error) {
-    $previewThumbContainer.removeClass('loading');
-    alert(data.result.error);
-    } else {
-    $('#filename').val(data.result.filename);
-    $('#file-size-value')
-    .text(data.result.formattedSize)
-    .attr('title', data.result.formattedSizeInBytes);
-    var $dimensionsVal = $('#dimensions-value');
-    if (data.result.dimensions) {
-    if (!$dimensionsVal.length) {
-    $('<div class="data">' +
-    '<div class="heading">' + {{ 'Dimensions'|t('app')|json_encode|raw }} + '</div>' +
-    '<div id="dimensions-value" class="value"></div>' +
-    '</div>').appendTo($('#meta-details'));
-    $dimensionsVal = $('#dimensions-value');
-    }
-    $dimensionsVal.text(data.result.dimensions);
-    } else if ($dimensionsVal.length) {
-    $dimensionsVal.parent().remove();
-    }
-    updatePreviewThumb();
-    Craft.cp.runQueue();
-    }
-    }
-    }
-    });
-    uploader.setParams({
-    assetId: assetId
-    });
-    $fileInput.click();
-    });
+        $('#replace-btn').on('click', function() {
+        var $fileInput = $('<input type="file" name="replaceFile" class="replaceFile hidden"/>')
+        .appendTo(Garnish.$bod);
+        var uploader = new Craft.Uploader($fileInput, {
+        url: Craft.getActionUrl('assets/replace-file'),
+        dropZone: null,
+        fileInput: $fileInput,
+        paramName: 'replaceFile',
+        events: {
+        fileuploadstart: function() {
+        $previewThumbContainer.addClass('loading');
+        },
+        fileuploaddone: function(event, data) {
+        if (data.result.error) {
+        $previewThumbContainer.removeClass('loading');
+        alert(data.result.error);
+        } else {
+        $('#filename').val(data.result.filename);
+        $('#file-size-value')
+        .text(data.result.formattedSize)
+        .attr('title', data.result.formattedSizeInBytes);
+        var $dimensionsVal = $('#dimensions-value');
+        if (data.result.dimensions) {
+        if (!$dimensionsVal.length) {
+        $('
+        <div class="data">' +
+            '
+            <div class="heading">' + {{ 'Dimensions'|t('app')|json_encode|raw }} + '</div>
+            ' +
+            '
+            <div id="dimensions-value" class="value"></div>
+            ' +
+            '
+        </div>').appendTo($('#meta-details'));
+        $dimensionsVal = $('#dimensions-value');
+        }
+        $dimensionsVal.text(data.result.dimensions);
+        } else if ($dimensionsVal.length) {
+        $dimensionsVal.parent().remove();
+        }
+        updatePreviewThumb();
+        Craft.cp.runQueue();
+        }
+        }
+        }
+        });
+        uploader.setParams({
+        assetId: assetId
+        });
+        $fileInput.click();
+        });
 
-    $('#edit-btn').on('click', function() {
+        $('#edit-btn').on('click', function() {
         new Craft.AssetImageEditor(assetId, {
-            onSave: function () {
-                updatePreviewThumb();
-            },
+        onSave: function () {
+        updatePreviewThumb();
+        },
         allowDegreeFractions: Craft.isImagick
         });
-    });
+        });
 
-    var settings = {};
+        var settings = {};
 
-    {% if dimensions %}
-        {% set previewDimensions = dimensions|split('×') %}
-        settings.startingWidth = {{ previewDimensions[0] }};
-        settings.startingHeight = {{ previewDimensions[1] }};
-    {% endif %}
+        {% if dimensions %}
+            {% set previewDimensions = dimensions|split('×') %}
+            settings.startingWidth = {{ previewDimensions[0] }};
+            settings.startingHeight = {{ previewDimensions[1] }};
+        {% endif %}
 
-    $('#preview-btn').on('click', function() {
-    new Craft.PreviewFileModal(assetId, null, settings);
-    });
-{% endjs %}
-
-{# Uppy #}
-{% js on ready %}
-
-{% endjs %}
+        $('#preview-btn').on('click', function() {
+        new Craft.PreviewFileModal(assetId, null, settings);
+        });
+    {% endjs %}
+{% endif %}
