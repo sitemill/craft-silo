@@ -8,10 +8,9 @@
 
 namespace sitemill\silo;
 
-use sitemill\silo\fields\SiloAssetsField as SiloAssetsField;
 use sitemill\silo\services\Lightbox as LightboxService;
 use sitemill\silo\services\Download as DownloadService;
-use sitemill\silo\services\SiloAssets as SiloAssetsService;
+use sitemill\silo\services\SiloSettings as SiloSettingsService;
 use sitemill\silo\services\Setup as SetupService;
 use sitemill\silo\variables\SiloVariable;
 use sitemill\silo\elements\SiloAsset;
@@ -46,7 +45,7 @@ use yii\base\Event;
  * @since     1.0.0
  *
  * @property  LightboxService $lightbox
- * @property  SiloAssetsService $libraryAssets
+ * @property  SiloSettingsService $siloSettings
  * @property  DownloadService $download
  * @property  SetupService $setup
  */
@@ -90,6 +89,12 @@ class Silo extends Plugin
     {
         parent::init();
         self::$plugin = $this;
+
+        // Register project config
+        Craft::$app->projectConfig
+            ->onAdd('silo', [self::$plugin->siloSettings, 'handleUpdateFieldLayout'])
+            ->onUpdate('silo', [self::$plugin->siloSettings, 'handleUpdateFieldLayout']);
+//            ->onRemove('siloAssets', [self::$plugin->siloSettings, 'handleDeletedSiloSettings']);
 
 
         // Register routes

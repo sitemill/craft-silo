@@ -44,7 +44,9 @@
     "changelogUrl": "https://raw.githubusercontent.com/sitemill/craft-silo/master/CHANGELOG.md",
     "components": {
       "lightbox": "sitemill\\silo\\services\\Lightbox",
-      "asset": "sitemill\\silo\\elements\\SiloAsset",
+      "siloAsset": "sitemill\\silo\\elements\\SiloAsset",
+      "lightbox": "sitemill\\silo\\services\\SiloAssets",
+      "siloSettings": "sitemill\\silo\\services\\SiloSettings",
       "download": "sitemill\\silo\\services\\Download"
     },
     "class": "sitemill\\silo\\Silo"

@@ -27,7 +27,8 @@ class SiloAssets extends Component
     /*
      * @return mixed
      */
-    public function getSiloAssetById(int $siloAssetId, $siteId = null, array $criteria = []) {
+    public function getSiloAssetById(int $siloAssetId, $siteId = null, array $criteria = [])
+    {
 
         if (!$siloAssetId) {
             return null;

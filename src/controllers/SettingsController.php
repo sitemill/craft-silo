@@ -12,7 +12,7 @@ use Craft;
 use craft\web\Controller;
 use sitemill\silo\Silo;
 use sitemill\silo\elements\SiloAsset;
-use sitemill\silo\services\SiloAssets;
+use sitemill\silo\services\SiloSettings;
 use yii\base\Exception;
 
 /**
@@ -43,10 +43,13 @@ class SettingsController extends Controller
 
         $fieldLayout = Craft::$app->getFields()->assembleLayoutFromPost();
         $fieldLayout->type = SiloAsset::class;
-        if (!Craft::$app->fields->saveLayout($fieldLayout)) {
-            $this->setFailFlash(Craft::t('app', 'Couldn’t save field layout.'));
-            return null;
-        }
+
+        Silo::$plugin->siloSettings->saveFieldLayout($fieldLayout);
+
+//        if (!Craft::$app->fields->saveLayout($fieldLayout)) {
+//            $this->setFailFlash(Craft::t('app', 'Couldn’t save field layout.'));
+//            return null;
+//        }
 
         $plugin = Craft::$app->getPlugins()->getPlugin('silo');
 
@@ -62,7 +65,7 @@ class SettingsController extends Controller
         }
 
         $this->setSuccessFlash(Craft::t('app', 'Plugin settings saved.'));
-        return $this->redirectToPostedUrl();
 
+        return $this->redirectToPostedUrl();
     }
 }

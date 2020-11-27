@@ -14,7 +14,7 @@ use Craft;
 use craft\web\Controller;
 use sitemill\silo\Silo;
 use sitemill\silo\elements\SiloAsset;
-use sitemill\silo\services\SiloAssets;
+use sitemill\silo\services\SiloSettings;
 use yii\base\Exception;
 
 /**
@@ -63,7 +63,7 @@ class DownloadController extends Controller
 
 //
         foreach ($fileIds as $siloAssetId) {
-            SiloAssets::instance()->incrementDownloads($siloAssetId);
+            SiloSettings::instance()->incrementDownloads($siloAssetId);
         }
 
 
