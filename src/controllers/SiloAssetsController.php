@@ -85,7 +85,7 @@ class SiloAssetsController extends BaseEntriesController
             }
         }
 
-        if ($siloAsset === null) {
+        if ($siloAsset->id === null) {
             $siloAsset = SiloAsset::find()
                 ->id($siloAssetId)
                 ->siteId($site->id)
@@ -101,7 +101,6 @@ class SiloAssetsController extends BaseEntriesController
 
         // Do they have permission?
         $this->enforceEditSiloAssetPermissions($siloAsset);
-
 
         $crumbs = [
             [
@@ -186,7 +185,6 @@ class SiloAssetsController extends BaseEntriesController
             'canEdit' => $siloAsset->getIsEditable(),
             'tabs' => $tabs,
             'fieldsHtml' => $fieldsHtml,
-//           TODO: Enable deleteing once template sorted
             'canDeleteSource' => 0,
         ]);
     }
@@ -277,6 +275,7 @@ class SiloAssetsController extends BaseEntriesController
             ]);
         }
         $this->setSuccessFlash(Craft::t('silo', 'Silo asset saved.'));
+
         return $this->redirectToPostedUrl($siloAsset);
     }
 

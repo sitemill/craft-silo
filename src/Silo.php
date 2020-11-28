@@ -8,6 +8,7 @@
 
 namespace sitemill\silo;
 
+use sitemill\silo\fields\SiloAssetsField;
 use sitemill\silo\services\Lightbox as LightboxService;
 use sitemill\silo\services\Download as DownloadService;
 use sitemill\silo\services\SiloAssets as SiloAssetsService;

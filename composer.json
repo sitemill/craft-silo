@@ -43,9 +43,10 @@
     "documentationUrl": "https://github.com/sitemill/craft-silo/blob/master/README.md",
     "changelogUrl": "https://raw.githubusercontent.com/sitemill/craft-silo/master/CHANGELOG.md",
     "components": {
-      "lightbox": "sitemill\\silo\\services\\Lightbox",
       "siloAsset": "sitemill\\silo\\elements\\SiloAsset",
       "siloAssets": "sitemill\\silo\\services\\SiloAssets",
+      "siloAssetsField": "sitemill\\silo\\fields\\SiloAssetsField",
+      "lightbox": "sitemill\\silo\\services\\Lightbox",
       "download": "sitemill\\silo\\services\\Download"
     },
     "class": "sitemill\\silo\\Silo"

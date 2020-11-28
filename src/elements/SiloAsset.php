@@ -389,6 +389,7 @@ class SiloAsset extends Element
                 ->insert('{{%silo_assets}}', [
                     'id' => $this->id,
                     'uploaderId' => (int)$this->uploaderId,
+                    'approverId' => null,
                     'assetId' => (int)$this->assetId,
                     'kind' => $this->kind,
                     'size' => $this->size ?: null,
@@ -400,7 +401,7 @@ class SiloAsset extends Element
             \Craft::$app->db->createCommand()
                 ->update('{{%silo_assets}}', [
                     'uploaderId' => (int)$this->uploaderId,
-//                    'approverId' => (int)$this->approverId,
+                    'approverId' => null,
                     'assetId' => (int)$this->assetId,
                     'kind' => $this->kind,
                     'size' => $this->size ?: null,
@@ -448,9 +449,8 @@ class SiloAsset extends Element
      */
     public function getCpEditUrl()
     {
-
         // The slug *might* not be set if this is a Draft and they've deleted it for whatever reason
-        $path = 'admin/silo-assets/' . $this->getSourceId() .
+        $path = 'silo-assets/' . $this->getSourceId() .
             ($this->slug && strpos($this->slug, '__') !== 0 ? '-' . $this->slug : '');
 
         $params = [];

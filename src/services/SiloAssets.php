@@ -35,6 +35,7 @@ class SiloAssets extends Component
     {
         $myComponentConfig = [];
         $fieldLayoutConfig = $fieldLayout->getConfig();
+
         if ($fieldLayoutConfig) {
             if (!$fieldLayout->id) {
                 $layoutUid = $fieldLayout->uid = StringHelper::UUID();
@@ -56,6 +57,7 @@ class SiloAssets extends Component
     public function handleUpdateSiloAssets(ConfigEvent $event)
     {
         $data = $event->newValue;
+
         $fieldLayout = Craft::$app->fields->getLayoutByType(SiloAsset::class);
         $layout = FieldLayout::createFromConfig(reset($data['fieldLayouts']));
         $layout->id = $fieldLayout->id;

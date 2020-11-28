@@ -41,7 +41,7 @@ class Install extends Migration
             'dateDeleted' => $this->dateTime()->null(),
             'dateApproved' => $this->dateTime()->null(),
             'uid' => $this->uid(),
-            'PRIMARY KEY([[id]])',
+            'PRIMARY KEY(id)',
         ]);
     }
 
@@ -58,9 +58,9 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-        $this->addForeignKey(null, '{{%silo_assets}}', ['id'], Table::ELEMENTS, ['id'], 'CASCADE');
-        $this->addForeignKey(null, '{{%silo_assets}}', ['assetId'], Table::ASSETS, ['id'], 'CASCADE');
-        $this->addForeignKey(null, '{{%silo_assets}}', ['uploaderId'], Table::USERS, ['id'], 'CASCADE');
-        $this->addForeignKey(null, '{{%silo_assets}}', ['approverId'], Table::USERS, ['id'], 'CASCADE');
+        $this->addForeignKey(null, '{{%silo_assets}}', ['id'], Table::ELEMENTS, ['id'], 'CASCADE',null);
+        $this->addForeignKey(null, '{{%silo_assets}}', ['assetId'], Table::ASSETS, ['id'], 'CASCADE',null);
+        $this->addForeignKey(null, '{{%silo_assets}}', ['uploaderId'], Table::USERS, ['id'], 'CASCADE',null);
+        $this->addForeignKey(null, '{{%silo_assets}}', ['approverId'], Table::USERS, ['id'], 'CASCADE', null);
     }
 }
