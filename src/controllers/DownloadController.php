@@ -63,7 +63,7 @@ class DownloadController extends Controller
 
 //
         foreach ($fileIds as $siloAssetId) {
-            SiloSettings::instance()->incrementDownloads($siloAssetId);
+            Silo::$plugin->siloAssets->incrementDownloads($siloAssetId);
         }
 
 
