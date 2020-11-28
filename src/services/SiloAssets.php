@@ -80,7 +80,7 @@ class SiloAssets extends Component
     /*
     * @return mixed
     */
-    public function archiveLibraryAsset(SiloAsset $siloAsset): bool
+    public function archiveSiloAsset(SiloAsset $siloAsset): bool
     {
         $siloAsset->isArchived = 1;
         return Craft::$app->elements->saveElement($siloAsset);

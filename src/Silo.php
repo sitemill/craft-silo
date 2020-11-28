@@ -90,8 +90,8 @@ class Silo extends Plugin
 
         // Register siloAssets project config
         Craft::$app->projectConfig
-            ->onAdd('siloAssets', [self::$plugin->siloAssets, 'handleUpdateFieldLayout'])
-            ->onUpdate('siloAssets', [self::$plugin->siloAssets, 'handleUpdateFieldLayout']);
+            ->onAdd('siloAssets', [self::$plugin->siloAssets, 'handleUpdateSiloAssets'])
+            ->onUpdate('siloAssets', [self::$plugin->siloAssets, 'handleUpdateSiloAssets']);
 
         // Register routes
         Event::on(
