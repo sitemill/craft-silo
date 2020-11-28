@@ -45,8 +45,7 @@
     "components": {
       "lightbox": "sitemill\\silo\\services\\Lightbox",
       "siloAsset": "sitemill\\silo\\elements\\SiloAsset",
-      "lightbox": "sitemill\\silo\\services\\SiloAssets",
-      "siloSettings": "sitemill\\silo\\services\\SiloSettings",
+      "siloAssets": "sitemill\\silo\\services\\SiloAssets",
       "download": "sitemill\\silo\\services\\Download"
     },
     "class": "sitemill\\silo\\Silo"

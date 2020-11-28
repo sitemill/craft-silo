@@ -8,6 +8,11 @@
 
 namespace sitemill\silo\services;
 
+use craft\db\Table;
+use craft\events\ConfigEvent;
+use craft\helpers\Db;
+use craft\helpers\StringHelper;
+use craft\models\FieldLayout;
 use sitemill\silo\elements\SiloAsset;
 
 use Craft;
@@ -23,6 +28,41 @@ class SiloAssets extends Component
     // Public Methods
     // =========================================================================
 
+    /*
+    * @return mixed
+    */
+    public function saveSiloAssets($fieldLayout)
+    {
+        $myComponentConfig = [];
+        $fieldLayoutConfig = $fieldLayout->getConfig();
+        if ($fieldLayoutConfig) {
+            if (!$fieldLayout->id) {
+                $layoutUid = $fieldLayout->uid = StringHelper::UUID();
+            } else {
+                $layoutUid = Db::uidById(Table::FIELDLAYOUTS, $fieldLayout->id);
+            }
+            $myComponentConfig['fieldLayouts'] = [
+                $layoutUid => $fieldLayoutConfig
+            ];
+        }
+        // Save it to the project config
+        $path = "siloAssets";
+        Craft::$app->projectConfig->set($path, $myComponentConfig);
+    }
+
+    /*
+    * @return mixed
+    */
+    public function handleUpdateSiloAssets(ConfigEvent $event)
+    {
+        $data = $event->newValue;
+        $fieldLayout = Craft::$app->fields->getLayoutByType(SiloAsset::class);
+        $layout = FieldLayout::createFromConfig(reset($data['fieldLayouts']));
+        $layout->id = $fieldLayout->id;
+        $layout->type = SiloAsset::class;
+        $layout->uid = key($data['fieldLayouts']);
+        Craft::$app->fields->saveLayout($layout);
+    }
 
     /*
      * @return mixed
