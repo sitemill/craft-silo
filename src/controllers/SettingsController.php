@@ -44,12 +44,7 @@ class SettingsController extends Controller
         $fieldLayout = Craft::$app->getFields()->assembleLayoutFromPost();
         $fieldLayout->type = SiloAsset::class;
 
-        Silo::$plugin->siloSettings->saveFieldLayout($fieldLayout);
-
-//        if (!Craft::$app->fields->saveLayout($fieldLayout)) {
-//            $this->setFailFlash(Craft::t('app', 'Couldn’t save field layout.'));
-//            return null;
-//        }
+        Silo::$plugin->siloAssets->saveSiloAssets($fieldLayout);
 
         $plugin = Craft::$app->getPlugins()->getPlugin('silo');
 
