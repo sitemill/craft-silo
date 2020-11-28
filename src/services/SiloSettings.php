@@ -56,20 +56,13 @@ class SiloSettings extends Component
     */
     public function handleUpdateFieldLayout(ConfigEvent $event)
     {
-//        $fieldLayout = Craft::$app->fields->getLayoutByType(SiloAsset::class);
-//        if (!empty($data['fieldLayouts'])) {
-//            // Save the field layout
-//            $layout = FieldLayout::createFromConfig(reset($data['fieldLayouts']));
-//            $layout->id = $fieldLayout->id;
-//            $layout->type = SiloAsset::class;
-//            $layout->uid = key($data['fieldLayouts']);
-//            Craft::$app->fields->saveLayout($layout);
-//            $fieldLayout->id = $layout->id;
-//        } else if ($fieldLayout->id) {
-//            // Delete the field layout
-//            Craft::$app->fields->deleteLayoutById($myComponentRecord->fieldLayoutId);
-//            $myComponentRecord->fieldLayoutId = null;
-//        }
+        $data = $event->newValue;
+        $fieldLayout = Craft::$app->fields->getLayoutByType(SiloAsset::class);
+        $layout = FieldLayout::createFromConfig(reset($data['fieldLayouts']));
+        $layout->id = $fieldLayout->id;
+        $layout->type = SiloAsset::class;
+        $layout->uid = key($data['fieldLayouts']);
+        Craft::$app->fields->saveLayout($layout);
     }
 
 }
