@@ -158,7 +158,7 @@ class Silo extends Plugin
                 $event->navItems[] = [
                     'url' => 'silo-assets',
                     'label' => 'Asset Manager',
-//                    'icon' => 'sitemill/silo/icon.svg',
+                    'icon' => '@sitemill/silo/icon-mask.svg',
                 ];
             }
         );
