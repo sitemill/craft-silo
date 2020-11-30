@@ -104,7 +104,7 @@ class SiloAsset extends Element
      */
     public static function displayName(): string
     {
-        return Craft::t('craft', 'Asset');
+        return Craft::t('app', 'Asset');
     }
 
     /**
@@ -112,7 +112,7 @@ class SiloAsset extends Element
      */
     public static function pluralDisplayName(): string
     {
-        return Craft::t('craft', 'Assets');
+        return Craft::t('app', 'Assets');
     }
 
     /**
