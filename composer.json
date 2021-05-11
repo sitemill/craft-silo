@@ -2,7 +2,7 @@
   "name": "sitemill/craft-silo",
   "description": "Digital asset manager for Craft CMS 3",
   "type": "craft-plugin",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha",
   "keywords": [
     "craft",
     "cms",
